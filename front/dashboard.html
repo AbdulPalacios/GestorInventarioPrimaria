@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - Gestor Primaria</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-school fa-2x"></i>
+            <h3>Inventario UPT</h3>
+        </div>
+        
+        <ul class="menu-list">
+            <li class="active"><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="#"><i class="fas fa-boxes"></i> Catálogo</a></li>
+            <li><a href="#"><i class="fas fa-exchange-alt"></i> Préstamos</a></li>
+            <li><a href="#"><i class="fas fa-chart-line"></i> Reportes</a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <button id="btnLogout" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h2 id="welcomeMessage">Hola, Usuario</h2>
+            <div class="user-badge">
+                <i class="fas fa-user-circle"></i>
+                <span id="userRole">Rol: ---</span>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <div class="card card-blue">
+                <div class="card-info">
+                    <h3>150</h3>
+                    <p>Libros Totales</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+            </div>
+
+            <div class="card card-green">
+                <div class="card-info">
+                    <h3>45</h3>
+                    <p>Material Deportivo</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-futbol"></i>
+                </div>
+            </div>
+
+            <div class="card card-orange">
+                <div class="card-info">
+                    <h3>12</h3>
+                    <p>Préstamos Activos</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+            </div>
+
+            <div class="card card-red">
+                <div class="card-info">
+                    <h3>3</h3>
+                    <p>Alertas de Stock</p>
+                </div>
+                <div class="card-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3>Acciones Rápidas</h3>
+            <div class="actions-grid">
+                <button class="action-btn"><i class="fas fa-plus"></i> Nuevo Préstamo</button>
+                <button class="action-btn"><i class="fas fa-search"></i> Buscar Alumno</button>
+            </div>
+        </div>
+    </main>
+    <script src="https://kit.fontawesome.com/e2dc84faef.js" crossorigin="anonymous"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
