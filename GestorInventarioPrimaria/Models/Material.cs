@@ -2,7 +2,7 @@
 
 namespace GestorInventarioPrimaria.Models
 {
-    public class Libro
+    public class Material
     {
         [Key]
         public int Id { get; set; }
@@ -14,9 +14,11 @@ namespace GestorInventarioPrimaria.Models
         [MaxLength(100)]
         public string Autor { get; set; } = "Desconocido";
 
-        [MaxLength(20)]
-        public string EstadoFisico { get; set; } = "Bueno"; // Valores: "Bueno", "Regular", "Malo"
+        [MaxLength(100)]
+        public string Editorial { get; set; } = "Sin Editorial";
 
-        public bool EstaDisponible { get; set; } = true;
+        public int StockTotal { get; set; } = 1;
+
+        public int StockDisponible { get; set; } = 1;
     }
 }

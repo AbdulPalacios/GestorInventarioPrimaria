@@ -31,7 +31,7 @@ loginForm.addEventListener('submit', async (e) => {
             localStorage.setItem('usuarioSesion', JSON.stringify(data));
             
             // Éxito visual (Temporal)
-            btnLogin.style.backgroundColor = "#10b981"; // Verde
+            btnLogin.style.backgroundColor = "#10b981";
             btnLogin.innerText = "¡Éxito!";
             
             setTimeout(() => {

@@ -32,7 +32,7 @@ namespace GestorInventarioPrimaria.Controllers
             return Ok(new
             {
                 Id = usuarioEncontrado.Id,
-                Nombre = usuarioEncontrado.NombreCompleto,
+                Nombre = usuarioEncontrado.Nombre,
                 Rol = usuarioEncontrado.Rol
             });
         }
@@ -49,15 +49,14 @@ namespace GestorInventarioPrimaria.Controllers
 
             var nuevoAdmin = new Usuario
             {
-                NombreCompleto = "Director General",
+                Nombre = "Director General",
                 Username = "admin",
                 PasswordHash = "12345",
-                Rol = "Admin",
-                Estatus = true
+                Rol = "Admin"
             };
 
             _context.Usuarios.Add(nuevoAdmin);
-            await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
             return Ok("Usuario creado con exito");
         }

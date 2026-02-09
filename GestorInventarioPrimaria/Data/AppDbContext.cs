@@ -9,6 +9,7 @@ namespace GestorInventarioPrimaria.Data
         {
         }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Libro> Libros { get; set; }
-    }
+        public DbSet<Material> Materiales { get; set; }
+        public DbSet<Reserva> Reservas { get; set; }
+        }
 }

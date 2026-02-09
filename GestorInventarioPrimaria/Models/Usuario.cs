@@ -15,7 +15,7 @@ namespace GestorInventarioPrimaria.Models
         public string Matricula { get; set; } = string.Empty;
 
         [MaxLength(50)]
-        public string? Username { get; set; } // Solo para Directores/Maestros
+        public string? Username { get; set; } // Solo para Directores/Maestros  
 
         public string? PasswordHash { get; set; } // Solo para Directores/Maestros
 
