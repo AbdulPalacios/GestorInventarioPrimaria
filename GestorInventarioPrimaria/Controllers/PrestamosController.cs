@@ -37,6 +37,15 @@ namespace GestorInventarioPrimaria.Controllers
                 return NotFound("❌ El material no existe.");
             }
 
+            //VALIDAR SI YA TIENE ESE MATERIAL PRESTADO
+            var prestamosActivos = await _context.Reservas
+                .CountAsync(r => r.UsuarioId == alumno.Id && r.Estatus == "Activo");
+
+            if (prestamosActivos >= 2)
+            {
+                return BadRequest($"❌ {alumno.Nombre} ya tiene {prestamosActivos} préstamos activos. Debe devolver alguno primero.");
+            }
+
             // Validamos Stock solo si es un objeto físico o instalación única
             if (material.StockDisponible <= 0)
             {
@@ -76,7 +85,7 @@ namespace GestorInventarioPrimaria.Controllers
             });
         }
 
-        // Sirve para ver qué cosas tiene prestadas un alumno específico
+        // Get: api/prestamos/pendientes/2023001
         [HttpGet("pendientes/{matricula}")]
         public async Task<ActionResult<IEnumerable<object>>> GetPendientes(string matricula)
         {
@@ -100,6 +109,7 @@ namespace GestorInventarioPrimaria.Controllers
             return Ok(prestamos);
         }
 
+        // PUT: api/prestamos/devolver/5
         [HttpPut("devolver/{idReserva}")]
         public async Task<IActionResult> DevolverMaterial(int idReserva)
         {
@@ -128,6 +138,27 @@ namespace GestorInventarioPrimaria.Controllers
             return Ok(new { mensaje = "✅ Devolución exitosa. Stock actualizado." });
         }
 
+        // PUT: api/Prestamos/renovar/5
+        [HttpPut("renovar/{id}")]
+        public async Task<IActionResult> RenovarPrestamo(int id)
+        {
+            var reserva = await _context.Reservas.FindAsync(id);
+
+            if (reserva == null) return NotFound("Préstamo no encontrado.");
+            if (reserva.Estatus != "Activo") return BadRequest("Solo se pueden renovar préstamos activos.");
+
+            // Extendemos 7 días más a partir de la fecha límite que ya tenía
+            reserva.FechaFinEsperada = reserva.FechaFinEsperada.AddDays(7);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                mensaje = "✅ Préstamo renovado por 7 días más",
+                nuevaFecha = reserva.FechaFinEsperada.ToString("dd/MM/yyyy")
+            });
+        }
+
         // GET: api/prestamos/historial?pagina=1&cantidad=10
         [HttpGet("historial")]
         public async Task<ActionResult<IEnumerable<object>>> GetHistorial(int pagina = 1, int cantidad = 10)
@@ -140,12 +171,13 @@ namespace GestorInventarioPrimaria.Controllers
                 .Include(r => r.Material)
                 .OrderByDescending(r => r.FechaInicio) 
                 .Skip((pagina - 1) * cantidad)       
-                .Take(cantidad)                      
+                .Take(cantidad)
                 .Select(r => new {
                     IdReserva = r.Id,
                     Alumno = r.Usuario.Nombre,
                     Material = r.Material.Titulo,
                     Fecha = r.FechaInicio.ToString("dd/MM/yyyy HH:mm"),
+                    FechaVencimiento = r.FechaFinEsperada,
                     Estado = r.Estatus
                 })
                 .ToListAsync();

@@ -80,6 +80,19 @@
             width: 100%;
             margin-top: 30px;
         }
+
+        #tablaHistorial tr {
+            transition: background-color 0.3s ease;
+        }
+
+        #tablaHistorial tr:hover {
+            filter: brightness(0.95);
+        }
+
+        .estado-activo {
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -146,23 +159,29 @@
         </div>
 
         <div class="card-accion" id="historial" style="margin-top: 20px;">
-        <div class="card-header">
-            <h2>📜 Últimos Movimientos del Sistema</h2>
+            <div class="card-header">
+                <h2>📜 Últimos Movimientos del Sistema</h2>
+            </div>
+            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px; background: #fff7ed; padding: 10px; border-radius: 6px; border: 1px solid #ffedd5;">
+                <label style="font-weight: bold; color: #9a3412; cursor: pointer;">
+                    <input type="checkbox" id="chkSoloDeudores" onchange="filtrarDeudores()"> 
+                    📖 Ver solo alumnos que deben material (Pendientes y Atrasados)
+                </label>
+            </div>
+            <table class="tabla-compacta">
+                <thead>
+                    <tr>
+                        <th>Alumno</th>
+                        <th>Material</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaHistorial">
+                    <tr><td colspan="4" style="text-align: center;">Cargando historial...</td></tr>
+                </tbody>
+            </table>
         </div>
-        <table class="tabla-compacta">
-            <thead>
-                <tr>
-                    <th>Alumno</th>
-                    <th>Material</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody id="tablaHistorial">
-                <tr><td colspan="4" style="text-align: center;">Cargando historial...</td></tr>
-            </tbody>
-        </table>
-    </div>
     </div>
 
     <script src="js/prestamos.js"></script>

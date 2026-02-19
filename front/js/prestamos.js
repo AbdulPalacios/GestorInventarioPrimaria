@@ -142,14 +142,18 @@ function renderizarTabla(lista) {
     }
 
     lista.forEach(item => {
+    const hoy = new Date();
+    const fechaLimite = new Date(item.fechaFin.split('/').reverse().join('-'));
+    const esAtrasado = hoy > fechaLimite;
+
         const fila = `
-            <tr>
+            <tr style="${esAtrasado ? 'background-color: #fef2f2;' : ''}">
                 <td><strong>${item.material}</strong></td>
-                <td style="font-size:0.85rem">${item.fechaFin}</td>
+                <td style="color: ${esAtrasado ? '#dc2626' : 'inherit'}; font-weight: ${esAtrasado ? 'bold' : 'normal'}">
+                    ${item.fechaFin} ${esAtrasado ? '⚠️ ATRASADO' : ''}
+                </td>
                 <td>
-                    <button onclick="devolverMaterial(${item.idReserva})" class="btn-rojo">
-                        Devolver
-                    </button>
+                    <button onclick="devolverMaterial(${item.idReserva})" class="btn-rojo">Devolver</button>
                 </td>
             </tr>
         `;
@@ -283,14 +287,39 @@ async function traerDatosHistorial(esCargaExtra = false) {
         }
 
         datos.forEach(h => {
-            const claseEstado = (h.estado === 'Activo' || h.estado === 'Activa') ? 'estado-activo' : 'estado-devuelto';
+            const hoy = new Date();
+            const fechaVencimiento = new Date(h.fechaVencimiento);
             
+            let estiloFila = "";
+            let badgeEstado = "";
+
+            if (h.estado === "Activo") {
+                // ¿Ya se pasó de la fecha límite?
+                if (hoy > fechaVencimiento) {
+                    // ROJO: Atrasado 🚩
+                    estiloFila = "background-color: #fef2f2; color: #991b1b; border-left: 5px solid #dc2626;";
+                    badgeEstado = `<span style="font-weight:bold;">⚠️ ATRASADO</span>`;
+                } else {
+                    // NARANJA: Pendiente (a tiempo) 📖
+                    estiloFila = "background-color: #fff7ed; color: #9a3412; border-left: 5px solid #f97316;";
+                    badgeEstado = `<span style="font-weight:bold;">Pendiente</span>`;
+                }
+            } else {
+                // BLANCO/GRIS: Devuelto ✅
+                badgeEstado = `<span class="estado-devuelto">Devuelto</span>`;
+            }
+
             const fila = `
-                <tr>
+                <tr style="${estiloFila}">
                     <td>${h.alumno}</td>
                     <td>${h.material}</td>
                     <td>${h.fecha}</td>
-                    <td><span class="${claseEstado}">${h.estado}</span></td>
+                    <td>
+                        ${badgeEstado}
+                        ${h.estado === "Activo" ? 
+                            `<button onclick="renovarPrestamo(${h.idReserva})" title="Renovar 7 días" style="border:none; background:none; cursor:pointer; margin-left:10px; font-size:1.2rem;">🕒</button>` 
+                            : ''}
+                    </td>
                 </tr>
             `;
             tabla.innerHTML += fila;
@@ -298,10 +327,53 @@ async function traerDatosHistorial(esCargaExtra = false) {
 
         // Añadimos (o movemos al final) el botón de "Cargar más"
         actualizarBotonCargarMas(datos.length);
+        filtrarDeudores();
 
     } catch (error) {
         console.error("Error historial:", error);
     }
+}
+
+async function renovarPrestamo(id) {
+    if (!confirm("¿Deseas dar 7 días más de plazo para este material?")) return;
+
+    try {
+        const response = await fetch(`https://localhost:7082/api/Prestamos/renovar/${id}`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            const res = await response.json();
+            alert("✅ Plazo extendido con éxito.");
+            cargarHistorial();
+        } else {
+            alert("No se pudo renovar el préstamo.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+function filtrarDeudores() {
+    const mostrarSoloDeudores = document.getElementById('chkSoloDeudores').checked;
+    const filas = document.querySelectorAll('#tablaHistorial tr');
+
+    filas.forEach(fila => {
+        const esAtrasado = fila.innerHTML.includes('⚠️ ATRASADO');
+        const esPendiente = fila.innerHTML.includes('Pendiente');
+
+        if (mostrarSoloDeudores) {
+            // Si el checkbox está marcado, mostramos la fila si cumple cualquiera de las dos
+            if (esAtrasado || esPendiente) {
+                fila.style.display = '';
+            } else {
+                fila.style.display = 'none'; 
+            }
+        } else {
+            // Si no está marcado, mostramos todo el historial (incluyendo devueltos)
+            fila.style.display = '';
+        }
+    });
 }
 
 function actualizarBotonCargarMas(cantidadRecibida) {
