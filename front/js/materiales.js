@@ -2,18 +2,39 @@ document.addEventListener('DOMContentLoaded', cargarInventario);
 
 async function cargarInventario() {
     const tabla = document.getElementById('tablaInventarioBody');
+    
     try {
         const response = await fetch('https://localhost:7082/api/Materiales');
         const materiales = await response.json();
         tabla.innerHTML = '';
 
         materiales.forEach(m => {
+            const stock = m.stockDisponible;
+            let estiloStock = '';
+            let aviso = '';
+
+            if (m.categoria !== "Salón") {
+                if (stock === 0) {
+                    estiloStock = "color: #dc2626; font-weight: bold; background: #fee2e2; padding: 2px 5px; border-radius: 4px;";
+                    aviso = " ¡AGOTADO!";
+                } else if (stock <= 3) {
+                    estiloStock = "color: #d97706; font-weight: bold;";
+                    aviso = " (Poco Stock)";
+                }else if (stock >= 4){
+                    estiloStock = "color: #059669; font-weight: bold;";
+                    aviso = " Suficiente Stock";
+                }
+            
+            }
+        
             tabla.innerHTML += `
                 <tr>
                     <td>${m.id}</td>
                     <td><strong>${m.titulo}</strong></td>
                     <td>${m.categoria}</td>
-                    <td>${m.stockDisponible}</td>
+                    <td>
+                        <span style="${estiloStock}">${stock}${aviso}</span>
+                    </td>
                     <td>
                         <button onclick="prepararEdicion(${JSON.stringify(m).replace(/"/g, '&quot;')})" class="btn-azul">✏️</button>
                         <button onclick="eliminarMaterial(${m.id})" class="btn-rojo">🗑️</button>
@@ -21,7 +42,10 @@ async function cargarInventario() {
                 </tr>
             `;
         });
-    } catch (error) { console.error(error); }
+    } catch (error) { 
+        console.error(error); 
+        tabla.innerHTML = '<tr><td colspan="5">Error al cargar datos.</td></tr>';
+    }
 }
 
 // FUNCIÓN PARA GUARDAR (CREAR O EDITAR)
@@ -93,6 +117,15 @@ async function eliminarMaterial(id) {
         console.error("Error al eliminar:", error);
         alert("Error de red.");
     }
+}
+
+// FILTRAR POR CATEGORÍA
+function filtrarPorCategoria(categoria) {
+    const inputBusqueda = document.getElementById('txtBuscarInv');
+    inputBusqueda.value = categoria;
+    
+    const evento = new Event('input');
+    inputBusqueda.dispatchEvent(evento);
 }
 
 function prepararEdicion(m) {

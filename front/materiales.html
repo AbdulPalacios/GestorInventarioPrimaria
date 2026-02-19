@@ -29,8 +29,8 @@
                             <label>Categoría:</label>
                             <select id="selCategoria" class="input-grande">
                                 <option value="Libro">Libro</option>
-                                <option value="Laptop">Laptop</option>
                                 <option value="Salón">Salón / Aula</option>
+                                <option value="Material Deportivo"> Material Deportivo</option>
                                 <option value="Otro">Otro</option>
                             </select>
                         </div>
@@ -46,7 +46,12 @@
             </div>
 
             <input type="text" id="txtBuscarInv" class="input-grande" placeholder="🔍 Filtrar inventario..." style="margin-top:20px;">
-
+            <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="filtrarPorCategoria('')" class="btn-azul" style="background: #374151;">Todos</button>
+                <button onclick="filtrarPorCategoria('Libro')" class="btn-azul">📚 Libros</button>
+                <button onclick="filtrarPorCategoria('Material Deportivo')" class="btn-azul">⚽ Deportes</button>
+                <button onclick="filtrarPorCategoria('Salón')" class="btn-azul">🏫 Salones</button>
+            </div>
             <div class="tabla-container">
                 <table class="tabla-compacta">
                     <thead>
@@ -59,7 +64,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaInventarioBody">
-                        </tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
