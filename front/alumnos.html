@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Alumnos</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/alumnos.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Directorio de Alumnos</h1>
+            <a href="dashboard.html" class="btn-volver">⬅ Volver al Dashboard</a>
+        </header>
+
+        <div class="card-accion">
+            <div class="card-header"><h2>👤 Registrar Nuevo Alumno</h2></div>
+            <form id="formNuevoAlumno" onsubmit="event.preventDefault(); registrarAlumno();">
+                <label>Nombre Completo:</label>
+                <input type="text" id="nombreAlumno" class="input-grande" placeholder="Ej: Juan Pérez López" required>
+                
+                <label>Grupo / Grado:</label>
+                <input type="text" id="grupoAlumno" class="input-grande" placeholder="Ej: 6to B" required>
+                
+                <button type="submit" class="btn-verde">Registrar y Generar Matrícula</button>
+            </form>
+            <div id="resultadoRegistro" style="margin-top: 15px; font-weight: bold;"></div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="txtFiltrarAlumnos" class="input-grande" 
+                placeholder="🔍 Buscar por nombre o matrícula..." 
+                style="width: 100%; box-sizing: border-box;">
+        </div>
+
+        <div class="tabla-container">
+            <table border="1" cellpadding="10" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #ddd;">
+                        <th>Matrícula</th>
+                        <th>Nombre Completo</th>
+                        <th>Grupo</th>
+                        <th>Acciones</th> </tr>
+                </thead>
+                <tbody id="tablaAlumnosBody">
+                    <tr>
+                        <td colspan="4">Cargando alumnos...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="js/alumnos.js"></script>
+</body>
+</html>

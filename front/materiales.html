@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Materiales</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css"> 
+    <link rel="stylesheet" href="css/materiales.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Inventario de Materiales</h1>
+            <a href="dashboard.html" class="btn-volver">⬅ Volver al Dashboard</a>
+        </header>
+
+        <div class="container">
+            <div class="card-accion">
+                <div class="card-header"><h2 id="tituloForm">📚 Gestionar Material / Libro</h2></div>
+                <form id="formMaterial" onsubmit="event.preventDefault(); guardarMaterial();">
+                    <input type="hidden" id="txtIdMaterial"> <label>Título del Material:</label>
+                    <input type="text" id="txtTitulo" class="input-grande" required>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label>Categoría:</label>
+                            <select id="selCategoria" class="input-grande">
+                                <option value="Libro">Libro</option>
+                                <option value="Laptop">Laptop</option>
+                                <option value="Salón">Salón / Aula</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Stock Inicial:</label>
+                            <input type="number" id="txtStock" class="input-grande" min="0" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="btnGuardar" class="btn-verde">Guardar en Inventario</button>
+                    <button type="button" onclick="limpiarFormulario()" class="btn-azul" style="background:#6b7280; margin-top:5px;">Cancelar</button>
+                </form>
+            </div>
+
+            <input type="text" id="txtBuscarInv" class="input-grande" placeholder="🔍 Filtrar inventario..." style="margin-top:20px;">
+
+            <div class="tabla-container">
+                <table class="tabla-compacta">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Título</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaInventarioBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/materiales.js"></script>
+</body>
+</html>

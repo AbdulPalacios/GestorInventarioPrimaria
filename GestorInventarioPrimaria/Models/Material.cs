@@ -11,6 +11,9 @@ namespace GestorInventarioPrimaria.Models
         [MaxLength(200)]
         public string Titulo { get; set; } = string.Empty;
 
+        [MaxLength(50)]
+        public string Categoria { get; set; } = "libro"; // libro, Material, Salon
+
         [MaxLength(100)]
         public string Autor { get; set; } = "Desconocido";
 

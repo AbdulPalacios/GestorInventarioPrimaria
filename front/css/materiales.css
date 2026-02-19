@@ -1,0 +1,35 @@
+/* Contenedor de la tabla con Scroll */
+.tabla-container {
+    max-height: 500px;       /* Altura máxima de la tabla */
+    overflow-y: auto;        /* Si pasa de 500px, pon barra de scroll */
+    border: 1px solid #ccc;  /* Un borde suave */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Sombrita elegante */
+}
+
+/* Tabla bonita */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Quita los espacios dobles entre bordes */
+}
+
+/* Encabezado FIJO (Lo más importante) */
+thead th {
+    position: sticky;
+    top: 0;
+    background-color: #2563EB; /* Azul bonito (cámbialo al de tu Figma) */
+    color: white;
+    z-index: 1; /* Para que pase por encima de las filas al hacer scroll */
+    padding: 15px;
+    text-align: left;
+}
+
+/* Filas */
+tbody td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Efecto Hover (Resaltar al pasar el mouse) */
+tbody tr:hover {
+    background-color: #f1f5f9;
+}

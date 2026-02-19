@@ -1,32 +1,14 @@
-/* 1. Reset básico: Quitamos márgenes por defecto */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* 2. Cuerpo: Centramos todo en la pantalla */
-body {
-    background-color: #f0f2f5; /* Gris muy suave */
-    height: 100vh; /* Altura completa de la ventana */
-    display: flex; /* Activar Flexbox */
-    justify-content: center; /* Centrar horizontalmente */
-    align-items: center; /* Centrar verticalmente */
-}
-
-/* 3. Tarjeta de Login */
+/* Tarjeta de Login */
 .login-card {
     background-color: white;
-    padding: 2rem; /* Espacio interno */
+    padding: 2rem;
     width: 100%;
-    max-width: 400px; /* No dejar que se haga gigante */
-    border-radius: 12px; /* Bordes redondeados */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombrita elegante */
-    border-top: 5px solid #2563eb; /* Línea azul arriba */
+    max-width: 700px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+    border-top: 5px solid #2563eb;
 }
 
-/* 4. Encabezado */
 .login-header {
     text-align: center;
     margin-bottom: 2rem;
@@ -48,7 +30,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* 5. Inputs y Etiquetas */
 .form-group {
     margin-bottom: 1.5rem;
 }
@@ -61,14 +42,14 @@ body {
 }
 
 .input-wrapper {
-    position: relative; /* Para poder poner el icono encima */
+    position: relative; 
 }
 
 .input-icon {
     position: absolute;
     left: 10px;
     top: 50%;
-    transform: translateY(-50%); /* Centrar icono verticalmente */
+    transform: translateY(-50%); 
     color: #9ca3af;
 }
 
