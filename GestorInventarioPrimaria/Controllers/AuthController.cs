@@ -53,6 +53,7 @@ namespace GestorInventarioPrimaria.Controllers
 
             var nuevoAdmin = new Usuario
             {
+                Nombre = request.Nombre,
                 Username = request.Username,
                 PasswordHash = request.Password, 
                 Rol = "Admin",
@@ -70,6 +71,7 @@ namespace GestorInventarioPrimaria.Controllers
     public class LoginRequest { public required string Username { get; set; } public required string Password { get; set; } }
     public class RegistroRequest
     {
+        public required string Nombre { get; set; }
         public required string Username { get; set; }
         public required string Password { get; set; }
         public required string CodigoMaestro { get; set; }

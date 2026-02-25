@@ -1,0 +1,132 @@
+/* --- LAYOUT DEL CONTENIDO PRINCIPAL --- */
+
+.main-content {
+    flex-grow: 1; /* Ocupa todo el espacio restante al lado del sidebar */
+    padding: 30px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+}
+
+/* --- BARRA SUPERIOR (TOP BAR) --- */
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.top-bar h2 {
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #f8fafc;
+    padding: 8px 16px;
+    border-radius: 50px;
+    border: 1px solid #e2e8f0;
+}
+
+.user-badge i {
+    font-size: 1.4rem;
+    color: #007BFF; /* Tu azul alegre */
+}
+
+.user-badge span {
+    font-weight: 600;
+    color: #475569;
+}
+
+/* --- GRID DE TARJETAS (CARDS) --- */
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-bottom: 5px solid transparent;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.card-info h3 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+    color: #1e293b;
+}
+
+.card-info p {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+/* --- VARIANTES DE COLORES --- */
+
+/* Azul Alegre (Alumnos) */
+.card-blue {
+    border-bottom-color: #007BFF;
+}
+.card-blue .card-icon {
+    color: #007BFF;
+}
+
+/* Verde (Inventario) */
+.card-green {
+    border-bottom-color: #10b981;
+}
+.card-green .card-icon {
+    color: #10b981;
+}
+
+/* Naranja (Préstamos) */
+.card-orange {
+    border-bottom-color: #f59e0b;
+}
+.card-orange .card-icon {
+    color: #f59e0b;
+}
+
+/* --- RESPONSIVIDAD --- */
+
+@media (max-width: 600px) {
+    .main-content {
+        padding: 15px;
+    }
+    
+    .top-bar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}

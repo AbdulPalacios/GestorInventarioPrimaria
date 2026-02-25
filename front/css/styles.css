@@ -1,106 +1,337 @@
-.login-card {
-    background-color: white;
-    padding: 2rem;
+:root {
+    --primary-color: #2563eb;
+    --primary-hover: #007BFF;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --bg-gradient: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+body {
+    background: var(--bg-gradient);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contenedor Principal */
+.main-container {
     width: 100%;
-    max-width: 700px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
-    border-top: 5px solid #2563eb;
+    max-width: 420px;
+    padding: 20px;
+}
+
+/* Tarjeta de Login */
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 30px;
 }
 
 .logo-icon {
     font-size: 3rem;
-    color: #2563eb;
+    color: var(--primary-color);
     margin-bottom: 10px;
 }
 
 .login-header h1 {
-    color: #1f2937;
-    margin-bottom: 5px;
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--text-main);
 }
 
 .login-header p {
-    color: #6b7280;
-    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-top: 5px;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
+/* Formulario */
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: #374151;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-main);
 }
 
 .input-wrapper {
-    position: relative; 
+    position: relative;
+    margin-bottom: 20px;
 }
 
 .input-icon {
     position: absolute;
-    left: 10px;
+    left: 12px;
     top: 50%;
-    transform: translateY(-50%); 
-    color: #9ca3af;
+    transform: translateY(-50%);
+    color: var(--text-muted);
 }
 
 .input-wrapper input {
     width: 100%;
-    padding: 10px 10px 10px 35px; 
+    padding: 12px 12px 12px 40px;
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
-    outline: none; 
-    transition: border-color 0.3s;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Importante para el ancho */
 }
 
 .input-wrapper input:focus {
-    border-color: #2563eb; 
+    outline: none;
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+/* Botón Principal */
 #btnLogin {
     width: 100%;
-    padding: 12px;
-    background-color: #2563eb;
+    padding: 14px;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 #btnLogin:hover {
-    background-color: #1d4ed8; 
+    background-color: var(--primary-hover);
 }
 
 #btnLogin:disabled {
-    background-color: #93c5fd;
+    background-color: #9ca3af;
     cursor: not-allowed;
 }
 
+/* Caja de Error */
 .error-box {
-    margin-top: 1rem;
-    padding: 10px;
+    margin-top: 20px;
     background-color: #fee2e2;
-    color: #991b1b;
-    border-radius: 6px;
-    font-size: 0.9rem;
+    color: var(--error-color);
+    padding: 12px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    font-size: 0.85rem;
+    border: 1px solid #fecaca;
 }
 
 .hidden {
-    display: none !important;
+    display: none;
+}
+
+/* Estilos del texto de registro */
+.register-link-text {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.register-link-text a {
+    color: #2563EB;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Estilos del Modal */
+.modal-overlay {
+    display: none; /* Se cambia a 'flex' vía JS */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Clases Utilitarias */
+.full-width {
+    width: 100%;
+}
+
+.mb-15 {
+    margin-bottom: 15px;
+}
+
+/* Contenedor del código de autorización */
+.auth-code-container {
+    background: #fff1f2;
+    border: 1px solid #fda4af;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.auth-label {
+    color: #e11d48;
+    font-weight: bold;
+    font-size: 0.8rem;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#regCodigo {
+    border-color: #fb7185;
+}
+
+/* Botones del modal */
+.btn-verde {
+    width: 100%;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-verde:hover {
+    background-color: #059669;
+}
+
+.btn-cancelar {
+    width: 100%;
+    background: none;
+    border: none;
+    color: gray;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.btn-cancelar:hover {
+    text-decoration: underline;
+}
+
+/* --- MEJORAS DEL MODAL DE REGISTRO --- */
+
+/* Animación de entrada para el modal */
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content {
+    background: white;
+    width: 95%;
+    max-width: 420px;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-title {
+    margin: 0 0 10px 0;
+    font-size: 1.6rem;
+    color: var(--text-main);
+    font-weight: 700;
+}
+
+/* Campos de entrada en el modal */
+.input-grande {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 1rem;
+    margin-top: 5px;
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+.input-grande:focus {
+    outline: none;
+    border-color: #10b981; /* Verde esmeralda para registro */
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Sección del Código de Autorización (Seguridad) */
+.auth-code-container {
+    background: #f8fafc; /* Gris azulado muy claro */
+    border: 2px dashed #cbd5e1;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.auth-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+/* Botones del Modal */
+.btn-verde {
+    width: 100%;
+    background: #10b981;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.1s;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.btn-verde:hover {
+    background: #059669;
+}
+
+.btn-verde:active {
+    transform: scale(0.98);
+}
+
+.btn-cancelar {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    padding: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.btn-cancelar:hover {
+    color: #1e293b;
+    text-decoration: underline;
 }

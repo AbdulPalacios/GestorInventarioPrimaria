@@ -9,52 +9,77 @@
 
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/alumnos.css">
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Directorio de Alumnos</h1>
-            <a href="dashboard.html" class="btn-volver">⬅ Volver al Dashboard</a>
-        </header>
+    <div class="dashboard-wrapper">
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-title">
+                    <h1><i class="fas fa-users-cog"></i> Directorio de Alumnos</h1>
+                </div>
+                <div class="user-badge">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="nombreUsuarioSaludo">Cargando...</span>
+                </div>
+            </header>
 
-        <div class="card-accion">
-            <div class="card-header"><h2>👤 Registrar Nuevo Alumno</h2></div>
-            <form id="formNuevoAlumno" onsubmit="event.preventDefault(); registrarAlumno();">
-                <label>Nombre Completo:</label>
-                <input type="text" id="nombreAlumno" class="input-grande" placeholder="Ej: Juan Pérez López" required>
-                
-                <label>Grupo / Grado:</label>
-                <input type="text" id="grupoAlumno" class="input-grande" placeholder="Ej: 6to B" required>
-                
-                <button type="submit" class="btn-verde">Registrar y Generar Matrícula</button>
-            </form>
-            <div id="resultadoRegistro" style="margin-top: 15px; font-weight: bold;"></div>
-        </div>
+            <div class="card-accion">
+                <div class="card-header">
+                    <h2><i class="fas fa-user-plus"></i> Registrar Nuevo Alumno</h2>
+                </div>
+                <form id="formNuevoAlumno" onsubmit="event.preventDefault(); registrarAlumno();">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label><i class="fas fa-signature"></i> Nombre Completo:</label>
+                            <input type="text" id="nombreAlumno" class="input-grande" placeholder="Ej: Juan Pérez López" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> Grupo / Grado:</label>
+                            <input type="text" id="grupoAlumno" class="input-grande" placeholder="Ej: 6to B" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-verde">
+                        <i class="fas fa-id-card"></i> Registrar y Generar Matrícula
+                    </button>
+                </form>
+                <div id="resultadoRegistro" class="resultado-msg"></div>
+            </div>
 
-        <div style="margin-bottom: 15px;">
-            <input type="text" id="txtFiltrarAlumnos" class="input-grande" 
-                placeholder="🔍 Buscar por nombre o matrícula..." 
-                style="width: 100%; box-sizing: border-box;">
-        </div>
+            <div class="search-container">
+                <div class="input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="txtFiltrarAlumnos" class="input-grande" 
+                        placeholder="Buscar por nombre o matrícula...">
+                </div>
+            </div>
 
-        <div class="tabla-container">
-            <table border="1" cellpadding="10" style="width: 100%; border-collapse: collapse;">
-                <thead>
-                    <tr style="background-color: #ddd;">
-                        <th>Matrícula</th>
-                        <th>Nombre Completo</th>
-                        <th>Grupo</th>
-                        <th>Acciones</th> </tr>
-                </thead>
-                <tbody id="tablaAlumnosBody">
-                    <tr>
-                        <td colspan="4">Cargando alumnos...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+            <div class="tabla-container">
+                <table id="tablaAlumnos">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> Matrícula</th>
+                            <th><i class="fas fa-user"></i> Nombre Completo</th>
+                            <th><i class="fas fa-graduation-cap"></i> Grupo</th>
+                            <th><i class="fas fa-tools"></i> Acciones</th> 
+                        </tr>
+                    </thead>
+                    <tbody id="tablaAlumnosBody">
+                        <tr>
+                            <td colspan="4">
+                                <i class="fas fa-spinner fa-spin"></i> Cargando alumnos...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
 
+    <script src="https://kit.fontawesome.com/e2dc84faef.js" crossorigin="anonymous"></script>
+    <script src="js/ui-constructor.js"></script>
     <script src="js/alumnos.js"></script>
 </body>
 </html>

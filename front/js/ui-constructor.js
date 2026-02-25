@@ -12,7 +12,7 @@ function construirInterfaz() {
     sidebar.innerHTML = `
         <div class="sidebar-header">
             <i class="fas fa-school"></i>
-            <span>Gestor Primaria</span>
+            <span>Gestor Primaria Benito Juarez</span>
         </div>
         <nav class="menu">
             <a href="dashboard.html" id="nav-inicio"><i class="fas fa-chart-line"></i> Inicio</a>

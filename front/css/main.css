@@ -1,31 +1,142 @@
+:root {
+    /* El azul alegre que elegiste */
+    --sidebar-bg: #007BFF;         
+    /* Un azul más claro y suave para el hover */
+    --sidebar-hover: #3395ff;      
+    /* Azul muy oscuro para el indicador de página activa (contraste alto) */
+    --sidebar-active: #002982;     
+    /* Blanco puro para máxima legibilidad sobre azul */
+    --sidebar-text: #ffffff;       
+    --sidebar-width: 260px;
+}
+
+/* Contenedor Principal (Layout) */
 .dashboard-wrapper {
     display: flex;
+    min-height: 100vh;
 }
 
+/* Estructura del Sidebar */
 .sidebar {
-    width: 250px;
+    width: var(--sidebar-width);
+    background-color: var(--sidebar-bg);
+    color: var(--sidebar-text);
+    display: flex;
+    flex-direction: column;
     height: 100vh;
-    position: fixed;
-    background: #1e293b;
+    position: sticky;
+    top: 0;
+    transition: all 0.3s ease;
+    /* Sombra más sutil para colores claros */
+    box-shadow: 2px 0 15px rgba(0, 123, 255, 0.2);
 }
 
-.main-content {
-    margin-left: 250px;
-    width: calc(100% - 250px);
-    padding: 20px;
+/* Cabecera del Sidebar */
+.sidebar-header {
+    padding: 30px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    /* Línea divisoria blanca semi-transparente */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
+.sidebar-header i {
+    font-size: 1.8rem;
+    color: #ffffff;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2));
 }
 
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+/* Navegación */
+.menu {
+    flex-grow: 1; 
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.menu a {
+    text-decoration: none;
+    /* Texto en blanco suave para que no canse la vista */
+    color: rgba(255, 255, 255, 0.85);
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    border-left: 5px solid transparent;
+}
+
+.menu a i {
+    width: 20px;
     text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Estado Hover */
+.menu a:hover {
+    background-color: var(--sidebar-hover);
+    color: white;
+    padding-left: 30px; /* Pequeño efecto de desplazamiento */
+}
+
+/* Estado Activo (Página Actual) */
+.menu a.active {
+    /* Fondo oscuro para que se note la selección sobre el azul claro */
+    background-color: rgba(0, 41, 130, 0.2);
+    color: white;
+    border-left-color: var(--sidebar-active);
+    font-weight: 700;
+}
+
+.menu a.active i {
+    color: white;
+}
+
+/* Footer y Botón de Salida */
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-logout {
+    width: 100%;
+    /* Rojo más claro para que no choque tanto con el azul brillante */
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+    background: #ff4d4d; /* Rojo sólido al pasar el mouse */
+    border-color: #ff4d4d;
+    color: white;
+}
+
+/* Responsividad básica */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+    }
+    .sidebar-header span, .menu a span, .sidebar-footer span {
+        display: none;
+    }
+    .menu a {
+        justify-content: center;
+        padding: 15px 0;
+        border-left: none;
+    }
 }

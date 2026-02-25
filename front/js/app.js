@@ -67,6 +67,7 @@ function cerrarModal() { document.getElementById('modalRegistro').style.display 
 
 async function registrarNuevoAdmin() {
     const datos = {
+        nombre: document.getElementById('regNombre').value,
         username: document.getElementById('regUser').value,
         password: document.getElementById('regPass').value,
         codigoMaestro: document.getElementById('regCodigo').value
@@ -83,6 +84,7 @@ async function registrarNuevoAdmin() {
         if (response.ok) {
             alert("✅ " + res.mensaje);
             cerrarModal();
+            document.getElementById('registroForm').reset();
         } else {
             alert("❌ " + res.mensaje);
         }

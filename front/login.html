@@ -14,7 +14,7 @@
             <div class="login-header">
                 <i class="fas fa-school logo-icon"></i>
                 <h1>Bienvenido</h1>
-                <p>Sistema De Gestion Escolar</p>
+                <p>Sistema De Gestion Escolar Pimaria Benito Juárez</p>
             </div>
 
             <form id="loginForm">
@@ -25,7 +25,7 @@
                         <input type="text" id="usernameInput" placeholder="Ej: admin" required>
                     </div>
 
-                    <label for="password">Contaseña</label>
+                    <label for="passwordInput">Contraseña</label>
                     <div class="input-wrapper">
                         <i class="fas fa-key input-icon"></i>
                         <input type="password" id="passwordInput" placeholder="Contraseña" required>        
@@ -36,31 +36,43 @@
                     Ingresar
                 </button>
 
-                <p style="margin-top:20px; font-size:0.9rem; text-align:center;">
-                    ¿Personal nuevo? <a href="#" onclick="abrirModal()" style="color: #2563EB; font-weight: bold; text-decoration: none;">Regístrate aquí</a>
+                <p class="register-link-text">
+                    ¿Personal nuevo? <a href="#" onclick="abrirModal()">Regístrate aquí</a>
                 </p>
             </form>
 
-             <div id="modalRegistro" class="modal-personalizado" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:1000; align-items:center; justify-content:center;">
-                    <div class="login-card" style="width:100%; max-width:400px; padding:30px;">
-                        <h2 style="margin-bottom:20px; text-align:center;">Registro de Admin</h2>
-                        <form id="registroForm" onsubmit="event.preventDefault(); registrarNuevoAdmin();">
-                            <label>Usuario:</label>
-                            <input type="text" id="regUser" class="input-grande" placeholder="Nombre de usuario" required style="width:100%; margin-bottom:15px;">
-                            
-                            <label>Contraseña:</label>
-                            <input type="password" id="regPass" class="input-grande" placeholder="Crea una contraseña" required style="width:100%; margin-bottom:15px;">
-                            
-                            <div style="background: #fff1f2; border: 1px solid #fda4af; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
-                                <label style="color:#e11d48; font-weight:bold; font-size:0.8rem;">🔒 Código de Autorización (Directora):</label>
-                                <input type="password" id="regCodigo" class="input-grande" placeholder="Ingresa la clave maestra" required style="width:100%; border-color:#fb7185;">
-                            </div>
-                            
-                            <button type="submit" class="btn-verde" style="width:100%; background-color:#10b981; color:white; border:none; padding:12px; border-radius:6px; cursor:pointer;">Finalizar Registro</button>
-                            <button type="button" onclick="cerrarModal()" style="width:100%; background:none; border:none; color:gray; cursor:pointer; margin-top:10px;">Cancelar</button>
-                        </form>
-                    </div>
+            <div id="modalRegistro" class="modal-overlay">
+                <div class="modal-content"> <h2 class="modal-title">Nuevo Administrador</h2>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 25px; text-align: center;">Crea una cuenta para gestionar el sistema.</p>
+                    
+                    <form id="registroForm" onsubmit="event.preventDefault(); registrarNuevoAdmin();">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label>Nombre Completo</label>
+                            <input type="text" id="regNombre" class="input-grande" placeholder="Ej: María Pérez García" required>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label>Usuario</label>
+                            <input type="text" id="regUser" class="input-grande" placeholder="Ej: maria_perez" required>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 5px;">
+                            <label>Contraseña</label>
+                            <input type="password" id="regPass" class="input-grande" placeholder="Mínimo 6 caracteres" required>
+                        </div>
+                        
+                        <div class="auth-code-container">
+                            <label class="auth-label">
+                                <i class="fas fa-user-shield"></i> Autorización
+                            </label>
+                            <input type="password" id="regCodigo" class="input-grande" placeholder="Clave de la Directora" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-verde">Crear Cuenta</button>
+                        <button type="button" class="btn-cancelar" onclick="cerrarModal()">Regresar al inicio</button>
+                    </form>
                 </div>
+            </div>
 
             <div id="errorMessage" class="error-box hidden">
                 <i class="fas fa-exclamation-circle"></i>
