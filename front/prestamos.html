@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Préstamos</title>
+
+    <script src="js/auth-guard.js"></script> 
+
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/styles.css">
     <style>
@@ -133,6 +136,16 @@
                         <input type="hidden" id="txtMaterialId">
                     </div>
                     
+                    <div id="divDuracionHoras" style="display: none; margin-bottom: 15px; background: #f0fdf4; padding: 10px; border-radius: 8px; border: 1px solid #bbf7d0;">
+                        <label style="font-weight: bold; color: #166534;">⏱️ Duración del préstamo:</label>
+                        <select id="selHoras" class="input-grande" style="margin-bottom: 0;">
+                            <option value="1">1 Hora (Clase corta)</option>
+                            <option value="2" selected>2 Horas (Bloque normal)</option>
+                            <option value="4">4 Horas (Medio turno)</option>
+                            <option value="6">6 Horas (Turno completo)</option>
+                        </select>
+                    </div>
+                    
                     <button type="submit" class="btn-verde">Confirmar Préstamo</button>
                     <p id="msgPrestamo" style="margin-top: 10px; font-weight: bold;"></p>
                 </form>
@@ -173,7 +186,7 @@
                     <tr>
                         <th>Alumno</th>
                         <th>Material</th>
-                        <th>Fecha</th>
+                        <th>Fecha Préstamo</th>
                         <th>Estado</th>
                     </tr>
                 </thead>

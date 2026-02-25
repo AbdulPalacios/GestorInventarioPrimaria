@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GestorInventarioPrimaria.Data;
+﻿using GestorInventarioPrimaria.Data;
 using GestorInventarioPrimaria.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestorInventarioPrimaria.Controllers
 {
@@ -9,56 +9,69 @@ namespace GestorInventarioPrimaria.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        // Inyección de Dependencias (El puente a la BD)
         private readonly AppDbContext _context;
+        private readonly string _codigoAutorizacion = "PRIMARIA2026"; // El código de la Directora
 
         public AuthController(AppDbContext context)
         {
             _context = context;
         }
 
-        // Endpoint de Login conectado a SQL Server
+        // POST: api/Auth/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] string username)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var usuarioEncontrado = await _context.Usuarios
-                                    .FirstOrDefaultAsync(u => u.Username == username);
+            var usuario = await _context.Usuarios
+                .FirstOrDefaultAsync(u => u.Username == request.Username && u.Rol == "Admin");
 
-            if (usuarioEncontrado == null)
+            if (usuario == null || usuario.PasswordHash != request.Password)
             {
-                return Unauthorized(new { mensaje = "Usuario no encontrado en la Base de Datos." });
+                return Unauthorized(new { mensaje = "Usuario o contraseña incorrectos." });
             }
 
             return Ok(new
             {
-                Id = usuarioEncontrado.Id,
-                Nombre = usuarioEncontrado.Nombre,
-                Rol = usuarioEncontrado.Rol
+                nombre = usuario.Nombre,
+                username = usuario.Username,
+                rol = usuario.Rol
             });
         }
 
-
-        // crear admin
-        [HttpPost("crear-admin")]
-        public async Task<IActionResult> CrearAdmin()
+        // POST: api/Auth/registrar
+        [HttpPost("registrar")]
+        public async Task<IActionResult> Registrar([FromBody] RegistroRequest request)
         {
-            if(await _context.Usuarios.AnyAsync(u => u.Username == "admin"))
+            if (request.CodigoMaestro != _codigoAutorizacion)
             {
-                return BadRequest("El admin ya existe");
+                return BadRequest(new { mensaje = "Código de autorización de la directora incorrecto." });
+            }
+
+            if (await _context.Usuarios.AnyAsync(u => u.Username == request.Username))
+            {
+                return BadRequest(new { mensaje = "El nombre de usuario ya existe." });
             }
 
             var nuevoAdmin = new Usuario
             {
-                Nombre = "Director General",
-                Username = "admin",
-                PasswordHash = "12345",
-                Rol = "Admin"
+                Username = request.Username,
+                PasswordHash = request.Password, 
+                Rol = "Admin",
+                Matricula = "DOC-" + Guid.NewGuid().ToString().Substring(0, 4).ToUpper()
             };
 
             _context.Usuarios.Add(nuevoAdmin);
-                await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
-            return Ok("Usuario creado con exito");
+            return Ok(new { mensaje = "Administrador registrado con éxito." });
         }
+    }
+
+    // DTOs para las peticiones
+    public class LoginRequest { public required string Username { get; set; } public required string Password { get; set; } }
+    public class RegistroRequest
+    {
+        public required string Username { get; set; }
+        public required string Password { get; set; }
+        public required string CodigoMaestro { get; set; }
     }
 }

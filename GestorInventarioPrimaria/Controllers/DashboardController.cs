@@ -18,15 +18,12 @@ namespace GestorInventarioPrimaria.Controllers
         [HttpGet("resumen")]
         public async Task<IActionResult> ObtenerResumen()
         {
-            var totalAlumnos = await _context.Usuarios
-                                     .CountAsync(u => u.Rol == "Alumno");
-
+            var totalAlumnos = await _context.Usuarios.CountAsync(u => u.Rol == "Alumno");
             var totalTitulos = await _context.Materiales.CountAsync();
+            var totalEjemplares = await _context.Materiales.SumAsync(m => m.StockTotal);
 
-            var totalEjemplares = await _context.Materiales
-                                        .SumAsync(m => m.StockTotal);
-
-            var prestamosActivos = 0;
+            // CONTAR PRÉSTAMOS ACTIVOS REALES
+            var prestamosActivos = await _context.Reservas.CountAsync(r => r.Estatus == "Activo");
 
             return Ok(new
             {

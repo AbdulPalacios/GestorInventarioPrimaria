@@ -1,34 +1,30 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    
-    // Verificar si hay sesión
+    // 1. Datos del usuario (del localStorage)
     const usuarioSesion = localStorage.getItem('usuarioSesion');
-    if (!usuarioSesion) {
-        window.location.href = 'index.html';
-        return;
+    if (usuarioSesion) {
+        const usuarioObj = JSON.parse(usuarioSesion);
+        const saludoElem = document.getElementById('nombreUsuarioSaludo');
+        if(saludoElem) saludoElem.innerText = usuarioObj.nombre; 
     }
 
-    // Saludar al usuario
-    const usuarioObj = JSON.parse(usuarioSesion);
-    // Busca si tienes un elemento para el nombre, si no, ignora esta línea
-    const saludoElem = document.getElementById('nombreUsuarioSaludo');
-    if(saludoElem) saludoElem.innerText = usuarioObj.nombre; 
-
-    // Obtener los números reales de la Base de Datos
+    // 2. Llamada a la API
     try {
         const response = await fetch('https://localhost:7082/api/dashboard/resumen');
-        
         if (response.ok) {
             const data = await response.json();
             
-            document.getElementById('lblTotalAlumnos').innerText = data.alumnos || 0;
-            document.getElementById('lblTotalTitulos').innerText = data.titulos || 0;
-            document.getElementById('lblPrestamos').innerText = data.prestamos || 0;
-            
-            console.log("Datos actualizados correctamente del servidor.");
-        } else {
-            console.error("Error al obtener datos del dashboard");
+            // ¡OJO! Revisa si tu API devuelve Mayúsculas o Minúsculas. 
+            // Según tu DashboardController.cs, son Mayúsculas:
+            const elemAlumnos = document.getElementById('lblTotalAlumnos');
+            const elemTitulos = document.getElementById('lblTotalTitulos');
+            const elemPrestamos = document.getElementById('lblPrestamos');
+
+            if(elemAlumnos) elemAlumnos.innerText = data.alumnos || data.Alumnos || 0;
+            if(elemTitulos) elemTitulos.innerText = data.titulos || data.Titulos || 0;
+            if(elemPrestamos) elemPrestamos.innerText = data.prestamos || data.Prestamos || 0;
+
         }
     } catch (error) {
-        console.error("Error de conexión:", error);
+        console.error("Error al conectar con el Dashboard:", error);
     }
 });

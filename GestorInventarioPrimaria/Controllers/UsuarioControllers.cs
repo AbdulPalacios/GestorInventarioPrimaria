@@ -102,5 +102,31 @@ namespace GestorInventarioPrimaria.Controllers
 
             return Ok("Alumno eliminado correctamente.");
         }
+
+        // GET: api/Usuarios/personal
+        [HttpGet("personal")]
+        public async Task<ActionResult<IEnumerable<Usuario>>> GetPersonalAdministrativo()
+        {
+            // Filtramos solo los que tengan rol Admin o docente
+            return await _context.Usuarios
+                .Where(u => u.Rol == "Admin")
+                .ToListAsync();
+        }
+
+        // DELETE: api/Usuarios/eliminar-personal/5
+        [HttpDelete("eliminar-personal/{id}")]
+        public async Task<IActionResult> EliminarPersonal(int id)
+        {
+            var admin = await _context.Usuarios.FindAsync(id);
+            if (admin == null) return NotFound("El usuario no existe.");
+
+            // Evitar que un admin se borre a sí mismo
+            if (admin.Rol != "Admin") return BadRequest("Solo se puede eliminar personal administrativo desde aquí.");
+
+            _context.Usuarios.Remove(admin);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "✅ Personal eliminado correctamente." });
+        }
     }
 }

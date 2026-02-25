@@ -77,7 +77,8 @@ async function realizarPrestamo() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 matriculaAlumno: matriculaActual,
-                materialId: parseInt(materialId)
+                materialId: parseInt(materialId),
+                horasDuracion: parseInt(document.getElementById('selHoras').value)
             })
         });
 
@@ -130,8 +131,6 @@ async function devolverMaterial(idReserva) {
     cargarHistorial();
 }
 
-// --- FUNCIONES DE APOYO Y AUTOCOMPLETADO ---
-
 function renderizarTabla(lista) {
     const tabla = document.getElementById('tablaPendientes');
     tabla.innerHTML = '';
@@ -142,15 +141,17 @@ function renderizarTabla(lista) {
     }
 
     lista.forEach(item => {
-    const hoy = new Date();
-    const fechaLimite = new Date(item.fechaFin.split('/').reverse().join('-'));
-    const esAtrasado = hoy > fechaLimite;
+        const hoy = new Date();
+        const fechaLimite = new Date(item.fechaFinRaw); 
+        const esAtrasado = hoy > fechaLimite;
+        const horaFormateada = fechaLimite.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
         const fila = `
             <tr style="${esAtrasado ? 'background-color: #fef2f2;' : ''}">
                 <td><strong>${item.material}</strong></td>
                 <td style="color: ${esAtrasado ? '#dc2626' : 'inherit'}; font-weight: ${esAtrasado ? 'bold' : 'normal'}">
-                    ${item.fechaFin} ${esAtrasado ? '⚠️ ATRASADO' : ''}
+                    ${item.fechaFin} - <strong>${horaFormateada}</strong> 
+                    ${esAtrasado ? '<br>⚠️ ATRASADO' : ''}
                 </td>
                 <td>
                     <button onclick="devolverMaterial(${item.idReserva})" class="btn-rojo">Devolver</button>
@@ -199,6 +200,13 @@ if (inputBusquedaMat) {
                         inputBusquedaMat.value = m.titulo;
                         inputIdOculto.value = m.id;
                         listaSugMat.style.display = 'none';
+
+                        const divHoras = document.getElementById('divDuracionHoras');
+                        if(m.categoria === "Salón" || m.categoria === "Material Deportivo") {
+                            divHoras.style.display = 'block';
+                        } else {
+                            divHoras.style.display = 'none';
+                        }
                     };
                     listaSugMat.appendChild(item);
                 });
@@ -288,24 +296,37 @@ async function traerDatosHistorial(esCargaExtra = false) {
 
         datos.forEach(h => {
             const hoy = new Date();
-            const fechaVencimiento = new Date(h.fechaVencimiento);
             
+            const fVenceRaw = h.fechaVencimiento || h.FechaVencimiento;
+            const fInicioRaw = h.fechaInicioRaw || h.FechaInicioRaw;
+            const fechaVencimiento = fVenceRaw ? new Date(fVenceRaw) : null;
+            const fechaInicio = fInicioRaw ? new Date(fInicioRaw) : null;
+
+            const esFechaValida = fechaVencimiento && !isNaN(fechaVencimiento.getTime());
+            
+            let fInicioStr = "Fecha no disponible";
+            let fVenceStr = "Sin fecha";
+
+            if (esFechaValida && fechaInicio) {
+                const opciones = { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' };
+                fInicioStr = fechaInicio.toLocaleString('es-MX', opciones);
+                fVenceStr = fechaVencimiento.toLocaleString('es-MX', opciones);
+            }
+
             let estiloFila = "";
             let badgeEstado = "";
 
             if (h.estado === "Activo") {
-                // ¿Ya se pasó de la fecha límite?
-                if (hoy > fechaVencimiento) {
+                if (esFechaValida && hoy > fechaVencimiento) {
                     // ROJO: Atrasado 🚩
                     estiloFila = "background-color: #fef2f2; color: #991b1b; border-left: 5px solid #dc2626;";
-                    badgeEstado = `<span style="font-weight:bold;">⚠️ ATRASADO</span>`;
+                    badgeEstado = `<span style="font-weight:bold;">⚠️ ATRASADO (Vence: ${fVenceStr})</span>`;
                 } else {
-                    // NARANJA: Pendiente (a tiempo) 📖
+                    // NARANJA: Pendiente 📖
                     estiloFila = "background-color: #fff7ed; color: #9a3412; border-left: 5px solid #f97316;";
-                    badgeEstado = `<span style="font-weight:bold;">Pendiente</span>`;
+                    badgeEstado = `<span style="font-weight:bold;">Pendiente (Entrega: ${fVenceStr})</span>`;
                 }
             } else {
-                // BLANCO/GRIS: Devuelto ✅
                 badgeEstado = `<span class="estado-devuelto">Devuelto</span>`;
             }
 
@@ -313,11 +334,11 @@ async function traerDatosHistorial(esCargaExtra = false) {
                 <tr style="${estiloFila}">
                     <td>${h.alumno}</td>
                     <td>${h.material}</td>
-                    <td>${h.fecha}</td>
+                    <td>${fInicioStr}</td>
                     <td>
                         ${badgeEstado}
                         ${h.estado === "Activo" ? 
-                            `<button onclick="renovarPrestamo(${h.idReserva})" title="Renovar 7 días" style="border:none; background:none; cursor:pointer; margin-left:10px; font-size:1.2rem;">🕒</button>` 
+                            `<button onclick="renovarPrestamo(${h.idReserva})" title="Renovar" style="border:none; background:none; cursor:pointer; margin-left:10px; font-size:1.2rem;">🕒</button>` 
                             : ''}
                     </td>
                 </tr>

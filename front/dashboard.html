@@ -2,68 +2,57 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <script src="js/auth-guard.js"></script> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Principal - Gestor Primaria</title>
+    
+
     <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
 
-    <nav class="sidebar">
-        <div class="sidebar-header">
-            <i class="fas fa-school fa-2x"></i>
-            <h3>Inventario UPT</h3>
-        </div>
-        
-        <ul class="menu-list">
-            <li class="active"><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
-            <li><a href="#"><i class="fas fa-boxes"></i> Catálogo</a></li>
-            <li><a href="#"><i class="fas fa-exchange-alt"></i> Préstamos</a></li>
-            <li><a href="#"><i class="fas fa-chart-line"></i> Reportes</a></li>
-        </ul>
+    <div class="dashboard-wrapper">
+        <main class="main-content">
+            <header class="top-bar">
+                <h2>Panel de Control</h2>
+                <div class="user-badge">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="nombreUsuarioSaludo">Cargando...</span>
+                </div>
+            </header>
 
-        <div class="sidebar-footer">
-            <button id="btnLogout" class="btn-logout">
-                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-            </button>
-        </div>
-    </nav>
+            <div class="dashboard-grid">
+                <div class="card card-blue">
+                    <div class="card-info">
+                        <h3 id="lblTotalAlumnos">0</h3>
+                        <p>Total Alumnos</p>
+                    </div>
+                    <i class="fas fa-user-graduate card-icon"></i>
+                </div>
 
-    <main class="main-content">
-        <header class="top-bar">
-            <h2 id="welcomeMessage">Hola, Usuario</h2>
-            <div class="user-badge">
-                <i class="fas fa-user-circle"></i>
-                <span id="userRole">Rol: ---</span>
+                <div class="card card-green">
+                    <div class="card-info">
+                        <h3 id="lblTotalTitulos">0</h3>
+                        <p>Títulos en Inventario</p>
+                    </div>
+                    <i class="fas fa-book card-icon"></i>
+                </div>
+
+                <div class="card card-orange">
+                    <div class="card-info">
+                        <h3 id="lblPrestamos">0</h3>
+                        <p>Préstamos Activos</p>
+                    </div>
+                    <i class="fas fa-hand-holding card-icon"></i>
+                </div>
             </div>
-        </header>
+        </main>
+    </div>
 
-        <div class="dashboard-grid">
-            <div class="card">
-                <h3>Alumnos</h3>
-                <p class="numero-grande" id="lblTotalAlumnos">Cargando...</p>
-            </div>
-
-            <div class="card">
-                <h3>Libros (Títulos)</h3>
-                <p class="numero-grande" id="lblTotalTitulos">Cargando...</p>
-            </div>
-
-            <div class="card">
-                <h3>Préstamos</h3>
-                <p class="numero-grande" id="lblPrestamos">0</p>
-            </div>
-        </div>
-
-        <div class="recent-activity">
-            <h3>Acciones Rápidas</h3>
-            <div class="actions-grid">
-                <button class="action-btn"><i class="fas fa-plus"></i> Nuevo Préstamo</button>
-                <button class="action-btn"><i class="fas fa-search"></i> Buscar Alumno</button>
-            </div>
-        </div>
-    </main>
     <script src="https://kit.fontawesome.com/e2dc84faef.js" crossorigin="anonymous"></script>
+    <script src="js/ui-constructor.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>

@@ -57,13 +57,11 @@ namespace GestorInventarioPrimaria.Controllers
             {
                 UsuarioId = alumno.Id,
                 MaterialId = material.Id,
-
-                // USAMOS LOS NUEVOS NOMBRES:
                 FechaInicio = DateTime.Now,
 
                 FechaFinEsperada = material.Categoria == "Libro"
                                    ? DateTime.Now.AddDays(7)
-                                   : DateTime.Now.AddHours(2),
+                                   : DateTime.Now.AddHours(datos.HorasDuracion ?? 2),
 
                 Motivo = "Préstamo escolar",
                 Estatus = "Activo"
@@ -102,7 +100,8 @@ namespace GestorInventarioPrimaria.Controllers
                                       IdReserva = r.Id,
                                       Material = r.Material.Titulo,
                                       FechaInicio = r.FechaInicio.ToShortDateString(),
-                                      FechaFin = r.FechaFinEsperada.ToShortDateString()
+                                      FechaFin = r.FechaFinEsperada.ToShortDateString(),
+                                      FechaFinRaw = r.FechaFinEsperada
                                   })
                                   .ToListAsync();
 
@@ -176,7 +175,7 @@ namespace GestorInventarioPrimaria.Controllers
                     IdReserva = r.Id,
                     Alumno = r.Usuario.Nombre,
                     Material = r.Material.Titulo,
-                    Fecha = r.FechaInicio.ToString("dd/MM/yyyy HH:mm"),
+                    FechaInicioRaw = r.FechaInicio,
                     FechaVencimiento = r.FechaFinEsperada,
                     Estado = r.Estatus
                 })

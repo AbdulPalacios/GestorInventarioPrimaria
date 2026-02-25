@@ -9,10 +9,10 @@ namespace GestorInventarioPrimaria.Models
 
         [Required]
         [MaxLength(150)]
-        public string Nombre { get; set; } = string.Empty;
+        public string? Nombre { get; set; } = string.Empty;
 
         [MaxLength(20)]
-        public string Matricula { get; set; } = string.Empty;
+        public string? Matricula { get; set; } = string.Empty;
 
         [MaxLength(50)]
         public string? Username { get; set; } // Solo para Directores/Maestros  
@@ -23,6 +23,6 @@ namespace GestorInventarioPrimaria.Models
         public string Rol { get; set; } = "Alumno"; // "Admin" o "Alumno"
 
         [MaxLength(10)]
-        public string Grupo { get; set; } = string.Empty; // Ej: "6° A"
+        public string? Grupo { get; set; } = string.Empty; // Ej: "6° A"
     }
 }

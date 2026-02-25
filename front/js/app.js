@@ -16,12 +16,13 @@ loginForm.addEventListener('submit', async (e) => {
     errorMessage.classList.add('hidden');
 
     const usuario = usernameInput.value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
 
     try {
         const response = await fetch(`${API_URL}/Auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(usuario)
+            body: JSON.stringify({username: usuario, password: password})
         });
 
         if (response.ok) {
@@ -32,7 +33,7 @@ loginForm.addEventListener('submit', async (e) => {
             
             // Éxito visual (Temporal)
             btnLogin.style.backgroundColor = "#10b981";
-            btnLogin.innerText = "¡Éxito!";
+            btnLogin.innerText = "¡Inicio de sesión exitoso!";
             
             setTimeout(() => {
                 localStorage.setItem('usuarioSesion', JSON.stringify(data));
@@ -40,7 +41,8 @@ loginForm.addEventListener('submit', async (e) => {
             }, 500);
 
         } else {
-            showError("Usuario no encontrado.");
+            const err = await response.json();
+            showError(err.mensaje || "Error de inicio de sesión");
         }
 
     } catch (error) {
@@ -58,4 +60,31 @@ loginForm.addEventListener('submit', async (e) => {
 function showError(msg) {
     errorMessage.classList.remove('hidden');
     errorText.textContent = msg;
+}
+
+function abrirModal() { document.getElementById('modalRegistro').style.display = 'flex'; }
+function cerrarModal() { document.getElementById('modalRegistro').style.display = 'none'; }
+
+async function registrarNuevoAdmin() {
+    const datos = {
+        username: document.getElementById('regUser').value,
+        password: document.getElementById('regPass').value,
+        codigoMaestro: document.getElementById('regCodigo').value
+    };
+
+    try {
+        const response = await fetch(`${API_URL}/Auth/registrar`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        });
+
+        const res = await response.json();
+        if (response.ok) {
+            alert("✅ " + res.mensaje);
+            cerrarModal();
+        } else {
+            alert("❌ " + res.mensaje);
+        }
+    } catch (error) { alert("Error de conexión"); }
 }
