@@ -1,0 +1,246 @@
+/* --- Contenedores Principales --- */
+.card-accion {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+    overflow: hidden;
+    width: 100%; /* Asegura que ocupe todo el ancho */
+}
+
+.form-padding {
+    padding: 25px;
+}
+
+/* --- Inputs al 100% y Estilizados --- */
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.input-grande {
+    width: 100% !important; /* Fuerza el ancho total */
+    box-sizing: border-box;
+    padding: 14px 15px 14px 45px !important; /* Espacio para el icono */
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: #f8fafc;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.input-grande:focus {
+    border-color: #3498db;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+    outline: none;
+}
+
+/* --- Iconos dentro de Inputs --- */
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    font-size: 1.1rem;
+    z-index: 5;
+}
+
+.panel-control {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.panel-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(0.8);
+}
+
+/* Colores de cabecera para identificar secciones */
+.header-azul { border-top: 5px solid #3498db; }
+.header-naranja { border-top: 5px solid #f39c12; }
+
+/* Contenedor Principal del Historial */
+#historial.card-accion {
+    border-top: 5px solid #2c3e50; /* Azul oscuro para diferenciarlo de las acciones */
+    margin-top: 30px;
+}
+
+/* Barra de Filtro (Deudores) */
+.filter-bar-orange {
+    background: #fff7ed;
+    padding: 15px 25px;
+    border-bottom: 1px solid #fed7aa;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    color: #9a3412;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #f97316; /* Color naranja para el check */
+    cursor: pointer;
+}
+
+.tabla-container {
+    padding: 10px;
+    background: white;
+}
+
+.tabla-compacta {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px; /* Crea un efecto de filas flotantes */
+}
+
+.tabla-compacta th {
+    padding: 12px 20px;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    border: none;
+}
+
+.tabla-compacta tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tabla-compacta tbody tr:hover {
+    transform: scale(1.005);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    z-index: 10;
+}
+
+.tabla-compacta td {
+    padding: 16px 20px;
+    border-top: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Bordes redondeados para las filas flotantes */
+.tabla-compacta td:first-child { border-left: 1px solid #f1f5f9; border-radius: 10px 0 0 10px; }
+.tabla-compacta td:last-child { border-right: 1px solid #f1f5f9; border-radius: 0 10px 10px 0; }
+
+/* Estilo general para etiquetas de estado */
+.badge-status {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ATRASADO: Rojo vibrante */
+.status-atrasado {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+/* PENDIENTE: Naranja cálido */
+.status-pendiente {
+    background-color: #ffedd5;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+}
+
+/* DEVUELTO: Gris/Verde suave */
+.status-devuelto {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+/* Iconos de tiempo (Reloj) */
+.time-icon {
+    font-size: 1rem;
+    color: #94a3b8;
+}
+
+/* Contenedor para scroll en móviles */
+.tabla-container {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden; /* Para que los bordes redondeados corten la tabla */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    margin-top: 10px;
+}
+
+.tabla-compacta {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: inherit;
+}
+
+/* Encabezados */
+.tabla-compacta thead {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.tabla-compacta th {
+    padding: 15px;
+    text-align: left;
+    color: #475569;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+/* Filas y Celdas */
+.tabla-compacta tbody tr {
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.tabla-compacta tbody tr:hover {
+    background-color: #f0f9ff; /* Azul muy tenue al pasar el mouse */
+}
+
+.tabla-compacta td {
+    padding: 14px 15px;
+    color: #334155;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+@media (max-width: 900px) {
+    .panel-control {
+        grid-template-columns: 1fr; /* En móviles una sola columna */
+    }
+}

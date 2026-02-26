@@ -9,42 +9,6 @@
     --sombra: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(---gris-fondo);
-    margin: 0;
-    color: #333;
-}
-
-/* Estructura Principal */
-.dashboard-wrapper {
-    display: flex;
-    min-height: 100vh;
-}
-
-.main-content {
-    flex: 1;
-    padding: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-/* Header y Títulos */
-.top-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 3px solid var(--azul-claro);
-    padding-bottom: 15px;
-    margin-bottom: 30px;
-}
-
-.header-title h1 {
-    color: var(--azul-primario);
-    margin: 0;
-    font-size: 1.8rem;
-}
-
 .btn-volver {
     text-decoration: none;
     background-color: var(--rojo-acento);

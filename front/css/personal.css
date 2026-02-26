@@ -1,0 +1,77 @@
+/* Contenedor Principal */
+.card-accion {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border-top: 5px solid #2c3e50; /* Azul oscuro institucional */
+    overflow: hidden;
+}
+
+/* Tabla Estilizada */
+.tabla-container {
+    padding: 15px;
+}
+
+.tabla-compacta {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Espaciado entre filas */
+}
+
+.tabla-compacta thead th {
+    padding: 15px;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    border: none;
+    text-align: left;
+}
+
+.tabla-compacta tbody tr {
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+}
+
+.tabla-compacta tbody tr:hover {
+    background-color: #ffffff;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: scale(1.01);
+}
+
+.tabla-compacta td {
+    padding: 18px 15px;
+    color: #1e293b;
+    border-top: 1px solid #edf2f7;
+    border-bottom: 1px solid #edf2f7;
+}
+
+/* Bordes redondeados para las filas */
+.tabla-compacta td:first-child { border-left: 1px solid #edf2f7; border-radius: 10px 0 0 10px; font-weight: 700; color: #3498db; }
+.tabla-compacta td:last-child { border-right: 1px solid #edf2f7; border-radius: 0 10px 10px 0; }
+
+/* Badge para el nombre de usuario */
+.usuario-tag {
+    background: #e2e8f0;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: #475569;
+}
+
+/* Estilos de botones de acción en tabla */
+.btn-editar-personal {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-editar-personal:hover { background: #2980b9; }
+
+.text-center { text-align: center; }

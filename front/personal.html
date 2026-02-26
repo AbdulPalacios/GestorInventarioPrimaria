@@ -3,31 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Gestión de Personal - Gestor Primaria</title>
     
     <script src="js/auth-guard.js"></script>
-
     <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/styles.css">
-
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/personal.css">
 </head>
 <body>
-    <div class="contenedor-personal">
-    <h2>📋 Personal Administrativo y Docente</h2>
-    <table class="tabla-escolar">
-        <thead>
-            <tr>
-                <th>Matrícula</th>
-                <th>Nombre</th>
-                <th>Usuario</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody id="tablaPersonal">
-            </tbody>
-    </table>
+    <div class="dashboard-wrapper">
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-title">
+                    <h1><i class="fas fa-user-shield"></i> Personal Administrativo y Docente</h1>
+                </div>
+                <div class="user-badge">
+                    <i class="fas fa-user-circle icon-usuario"></i>
+                    <span id="nombreUsuarioSaludo">Cargando...</span>
+                </div>
+            </header>
+
+            <div style="margin-bottom: 20px;">
+                <a href="dashboard.html" class="btn-volver">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                </a>
+            </div>
+
+            <div class="card-accion">
+                <div class="card-header">
+                    <h2><i class="fas fa-address-book"></i> Directorio de Usuarios del Sistema</h2>
+                </div>
+                
+                <div class="tabla-container">
+                    <table class="tabla-compacta">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Matrícula</th>
+                                <th><i class="fas fa-id-card"></i> Nombre Completo</th>
+                                <th><i class="fas fa-user-lock"></i> Usuario</th>
+                                <th><i class="fas fa-tools"></i> Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPersonal">
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    <i class="fas fa-spinner fa-spin"></i> Cargando personal...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 
+    <script src="https://kit.fontawesome.com/e2dc84faef.js" crossorigin="anonymous"></script>
     <script src="js/personal.js"></script>
+    <script src="js/saludoUsuario.js"></script>
+    <script src="js/ui-constructor.js"></script>
 </body>
 </html>

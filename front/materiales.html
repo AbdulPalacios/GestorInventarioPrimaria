@@ -4,57 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario de Materiales</title>
-
     <script src="js/auth-guard.js"></script>
-
     <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/styles.css"> 
-    <link rel="stylesheet" href="css/materiales.css">
-
+    <link rel="stylesheet" href="css/main.css"> <link rel="stylesheet" href="css/materiales.css">
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>Inventario de Materiales</h1>
-            <a href="dashboard.html" class="btn-volver">⬅ Volver al Dashboard</a>
-        </header>
+    <div class="dashboard-wrapper">
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-title">
+                    <h1><i class="fas fa-boxes"></i> Inventario de Materiales</h1>
+                </div>
+                <div class="user-badge">
+                    <i class="fas fa-user-circle icon-usuario"></i>
+                    <span id="nombreUsuarioSaludo">Cargando...</span>
+                </div>
+            </header>
 
-        <div class="container">
             <div class="card-accion">
-                <div class="card-header"><h2 id="tituloForm">📚 Gestionar Material / Libro</h2></div>
+                <div class="card-header">
+                    <h2 id="tituloForm"><i class="fas fa-edit"></i> Gestionar Material / Libro</h2>
+                </div>
                 <form id="formMaterial" onsubmit="event.preventDefault(); guardarMaterial();">
-                    <input type="hidden" id="txtIdMaterial"> <label>Título del Material:</label>
-                    <input type="text" id="txtTitulo" class="input-grande" required>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div>
-                            <label>Categoría:</label>
-                            <select id="selCategoria" class="input-grande">
-                                <option value="Libro">Libro</option>
-                                <option value="Salón">Salón / Aula</option>
-                                <option value="Material Deportivo"> Material Deportivo</option>
-                                <option value="Otro">Otro</option>
-                            </select>
+                    <div class="form-padding">
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label><i class="fas fa-book"></i> Título del Material / Libro</label>
+                            <input type="text" id="txtTitulo" class="input-grande" placeholder="Nombre descriptivo..." required>
                         </div>
-                        <div>
-                            <label>Stock Inicial:</label>
-                            <input type="number" id="txtStock" class="input-grande" min="0" required>
+
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label><i class="fas fa-tags"></i> Categoría</label>
+                                <select id="selCategoria" class="input-grande">
+                                    <option value="Libro">Libro</option>
+                                    <option value="Salón">Salón / Aula</option>
+                                    <option value="Material Deportivo">Deportes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-cubes"></i> Stock Inicial</label>
+                                <input type="number" id="txtStock" class="input-grande" min="0" value="1" required>
+                            </div>
                         </div>
                     </div>
-                    
-                    <button type="submit" id="btnGuardar" class="btn-verde">Guardar en Inventario</button>
-                    <button type="button" onclick="limpiarFormulario()" class="btn-azul" style="background:#6b7280; margin-top:5px;">Cancelar</button>
+
+                    <div class="button-group">
+                        <button type="submit" id="btnGuardar" class="btn-verde">
+                            <i class="fas fa-check-circle"></i> Guardar Material
+                        </button>
+                        <button type="button" onclick="limpiarFormulario()" class="btn-cancelar">
+                            <i class="fas fa-undo"></i> Limpiar
+                        </button>
+                    </div>
                 </form>
             </div>
 
-            <input type="text" id="txtBuscarInv" class="input-grande" placeholder="🔍 Filtrar inventario..." style="margin-top:20px;">
-            <div style="margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="filtrarPorCategoria('')" class="btn-azul" style="background: #374151;">Todos</button>
-                <button onclick="filtrarPorCategoria('Libro')" class="btn-azul">📚 Libros</button>
-                <button onclick="filtrarPorCategoria('Material Deportivo')" class="btn-azul">⚽ Deportes</button>
-                <button onclick="filtrarPorCategoria('Salón')" class="btn-azul">🏫 Salones</button>
+            <div class="search-container">
+                <div class="input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="txtBuscarInv" class="input-grande" placeholder="Filtrar por nombre de material...">
+                </div>
             </div>
+
+            <div class="filter-chips">
+                <button onclick="filtrarPorCategoria('')" class="chip active">Todos</button>
+                <button onclick="filtrarPorCategoria('Libro')" class="chip">📚 Libros</button>
+                <button onclick="filtrarPorCategoria('Material Deportivo')" class="chip">⚽ Deportes</button>
+                <button onclick="filtrarPorCategoria('Salón')" class="chip">🏫 Salones</button>
+            </div>
+
             <div class="tabla-container">
                 <table class="tabla-compacta">
                     <thead>
@@ -67,13 +86,15 @@
                         </tr>
                     </thead>
                     <tbody id="tablaInventarioBody">
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
-        </div>
-
+        </main>
     </div>
 
+    <script src="https://kit.fontawesome.com/e2dc84faef.js" crossorigin="anonymous"></script>
     <script src="js/materiales.js"></script>
+    <script src="js/saludoUsuario.js"></script>
+    <script src="js/ui-constructor.js"></script>
 </body>
 </html>

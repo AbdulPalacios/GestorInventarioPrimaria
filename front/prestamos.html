@@ -8,195 +8,130 @@
     <script src="js/auth-guard.js"></script> 
 
     <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <style>
-        .panel-control {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .card-accion {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .card-header {
-            border-bottom: 2px solid #f3f4f6;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-        }
-        
-        .card-header h2 { font-size: 1.2rem; color: #111827; margin: 0; }
-
-        .input-grande {
-            width: 100%; padding: 12px; font-size: 1.1rem;
-            border: 2px solid #d1d5db; border-radius: 6px; margin-bottom: 10px;
-        }
-
-        .btn-verde { background-color: #10B981; color: white; width: 100%; padding: 10px; border:none; border-radius:6px; cursor:pointer; font-size: 1rem; }
-        .btn-azul { background-color: #2563EB; color: white; border:none; padding: 10px 20px; border-radius:6px; cursor:pointer; }
-        .btn-rojo { background-color: #EF4444; color: white; border:none; padding: 5px 10px; border-radius:4px; cursor:pointer; }
-
-        .estado-alumno {
-            background-color: #e0f2fe; color: #0369a1;
-            padding: 10px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight: bold;
-            display: none; /* Se oculta hasta buscar */
-        }
-        
-        /* Tabla compacta */
-        .tabla-compacta { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        .tabla-compacta th { text-align: left; background: #f9fafb; padding: 8px; border-bottom: 1px solid #eee; }
-        .tabla-compacta td { padding: 8px; border-bottom: 1px solid #eee; }
-
-        @media (max-width: 768px) {
-            .panel-control { grid-template-columns: 1fr; } /* En celular se pone una debajo de otra */
-        }
-
-        /* Contenedor de sugerencias */
-        #listaSugerencias, #listaSugerenciasAlumno {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 1px solid #e2e8f0;
-            border-radius: 0 0 8px 8px;
-            background: white;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Cada item de la lista */
-        #listaSugerencias div, #listaSugerenciasAlumno div {
-            transition: all 0.2s ease;
-            border-left: 4px solid transparent;
-        }
-
-        /* Efecto al pasar el mouse */
-        #listaSugerencias div:hover, #listaSugerenciasAlumno div:hover {
-            background-color: #f0f9ff;
-            border-left: 4px solid #2563eb;
-            padding-left: 15px !important;
-        }
-
-        #historial {
-            width: 100%;
-            margin-top: 30px;
-        }
-
-        #tablaHistorial tr {
-            transition: background-color 0.3s ease;
-        }
-
-        #tablaHistorial tr:hover {
-            filter: brightness(0.95);
-        }
-
-        .estado-activo {
-            font-weight: bold;
-            font-size: 0.8rem;
-        }
-    </style>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/prestamos.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Centro de Préstamos y Devoluciones</h1>
-            <a href="dashboard.html" class="btn-volver">⬅ Volver al Dashboard</a>
-        </header>
-
-        <div class="card-accion" style="margin-bottom: 20px;">
-            <label style="font-weight: bold;">Paso 1: Identificar Alumno (Nombre o Matrícula)</label>
-            <div style="position: relative; margin-top: 5px;">
-                <input type="text" id="txtBusquedaAlumno" class="input-grande" placeholder="Empieza a escribir el nombre del alumno..." autocomplete="off">
-                
-                <div id="listaSugerenciasAlumno" style="position: absolute; width: 100%; background: white; z-index: 101; border: 1px solid #ddd; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 0 0 6px 6px;">
+    <div class="dashboard-wrapper">
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="header-title">
+                    <h1><i class="fas fa-hand-holding"></i> Centro de Préstamos</h1>
                 </div>
-            </div>
-            
-            <div id="infoAlumno" class="estado-alumno">
-                Alumno Seleccionado: <span id="lblNombreAlumnoActivo">---</span> (<span id="lblMatriculaActiva">---</span>)
-            </div>
-        </div>
+                <div class="user-badge">
+                    <i class="fas fa-user-circle icon-usuario"></i>
+                    <span id="nombreUsuarioSaludo">Cargando...</span>
+                </div>
+            </header>
 
-        <div id="panelOperaciones" class="panel-control" style="opacity: 0.5; pointer-events: none;">
-            
-            <div class="card-accion">
+            <div class="card-accion step-card">
                 <div class="card-header">
-                    <h2>📤 Nuevo Préstamo</h2>
+                    <h2><i class="fas fa-search"></i> Paso 1: Identificar Alumno</h2>
                 </div>
-                <form id="formPrestamo" onsubmit="event.preventDefault(); realizarPrestamo();">
-                    <label>ID del Material / Libro:</label>
-                    <div style="position: relative;"> <label>Buscar Libro o Salón por nombre:</label>
-                        <input type="text" id="txtBusquedaMaterial" class="input-grande" placeholder="Escribe el nombre del libro..." autocomplete="off">
-                        
-                        <div id="listaSugerencias" style="position: absolute; width: 100%; background: white; z-index: 100; border: 1px solid #ddd; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 0 0 6px 6px;">
+                <div class="form-padding">
+                    <div class="form-group" style="position: relative;">
+                        <label>Nombre o Matrícula del Alumno:</label>
+                        <div class="input-wrapper">
+                             <i class="fas fa-user search-icon"></i>
+                             <input type="text" id="txtBusquedaAlumno" class="input-grande" placeholder="Empieza a escribir..." autocomplete="off">
+                        </div>
+                        <div id="listaSugerenciasAlumno" class="sugerencias-dropdown"></div>
+                    </div>
+                    
+                    <div id="infoAlumno" class="estado-alumno">
+                        <i class="fas fa-check-circle"></i> Alumno Seleccionado: 
+                        <span id="lblNombreAlumnoActivo">---</span> (<span id="lblMatriculaActiva">---</span>)
+                    </div>
+                </div>
+            </div>
+
+            <div id="panelOperaciones" class="panel-control panel-disabled">
+                <div class="card-accion">
+                    <div class="card-header header-azul">
+                        <h2><i class="fas fa-upload"></i> Nuevo Préstamo</h2>
+                    </div>
+                    <form id="formPrestamo" onsubmit="event.preventDefault(); realizarPrestamo();" class="form-padding">
+                        <div class="form-group" style="position: relative;">
+                            <label>Buscar Material o Salón:</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-book search-icon"></i>
+                                <input type="text" id="txtBusquedaMaterial" class="input-grande" placeholder="Ej: Libro de Historia..." autocomplete="off">
+                            </div>
+                            <div id="listaSugerencias" class="sugerencias-dropdown"></div>
+                            <input type="hidden" id="txtMaterialId">
                         </div>
 
-                        <input type="hidden" id="txtMaterialId">
-                    </div>
-                    
-                    <div id="divDuracionHoras" style="display: none; margin-bottom: 15px; background: #f0fdf4; padding: 10px; border-radius: 8px; border: 1px solid #bbf7d0;">
-                        <label style="font-weight: bold; color: #166534;">⏱️ Duración del préstamo:</label>
-                        <select id="selHoras" class="input-grande" style="margin-bottom: 0;">
-                            <option value="1">1 Hora (Clase corta)</option>
-                            <option value="2" selected>2 Horas (Bloque normal)</option>
-                            <option value="4">4 Horas (Medio turno)</option>
-                            <option value="6">6 Horas (Turno completo)</option>
-                        </select>
-                    </div>
-                    
-                    <button type="submit" class="btn-verde">Confirmar Préstamo</button>
-                    <p id="msgPrestamo" style="margin-top: 10px; font-weight: bold;"></p>
-                </form>
-            </div>
-
-            <div class="card-accion">
-                <div class="card-header">
-                    <h2>📥 Devoluciones Pendientes</h2>
+                        <div id="divDuracionHoras" class="info-alert" style="display: none;">
+                            <label><i class="fas fa-clock"></i> Duración del préstamo:</label>
+                            <select id="selHoras" class="input-grande">
+                                <option value="1">1 Hora (Clase corta)</option>
+                                <option value="2" selected>2 Horas (Bloque normal)</option>
+                                <option value="4">4 Horas (Medio turno)</option>
+                                <option value="6">6 Horas (Turno completo)</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn-verde">
+                            <i class="fas fa-check"></i> Confirmar Préstamo
+                        </button>
+                        <p id="msgPrestamo" class="resultado-msg"></p>
+                    </form>
                 </div>
-                <table class="tabla-compacta">
-                    <thead>
-                        <tr>
-                            <th>Material</th>
-                            <th>Límite</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaPendientes">
-                        <tr><td colspan="3" style="text-align: center; color: gray;">Sin préstamos activos</td></tr>
-                    </tbody>
-                </table>
+
+                <div class="card-accion">
+                    <div class="card-header header-naranja">
+                        <h2><i class="fas fa-download"></i> Devoluciones Pendientes</h2>
+                    </div>
+                    <div class="tabla-container-mini">
+                        <table class="tabla-compacta">
+                            <thead>
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Límite</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaPendientes">
+                                <tr><td colspan="3" class="text-center gray">Sin préstamos activos</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
-        </div>
-
-        <div class="card-accion" id="historial" style="margin-top: 20px;">
-            <div class="card-header">
-                <h2>📜 Últimos Movimientos del Sistema</h2>
+            <div class="card-accion" id="historial">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Últimos Movimientos</h2>
+                </div>
+                <div class="filter-bar-orange">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="chkSoloDeudores" onchange="filtrarDeudores()"> 
+                        <span class="checkmark"></span>
+                        Ver solo alumnos que deben material (Pendientes y Atrasados)
+                    </label>
+                </div>
+                <div class="tabla-container">
+                    <table class="tabla-compacta">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Material</th>
+                                <th>Fecha Préstamo</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaHistorial">
+                            <tr><td colspan="4" class="text-center">Cargando historial...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px; background: #fff7ed; padding: 10px; border-radius: 6px; border: 1px solid #ffedd5;">
-                <label style="font-weight: bold; color: #9a3412; cursor: pointer;">
-                    <input type="checkbox" id="chkSoloDeudores" onchange="filtrarDeudores()"> 
-                    📖 Ver solo alumnos que deben material (Pendientes y Atrasados)
-                </label>
-            </div>
-            <table class="tabla-compacta">
-                <thead>
-                    <tr>
-                        <th>Alumno</th>
-                        <th>Material</th>
-                        <th>Fecha Préstamo</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaHistorial">
-                    <tr><td colspan="4" style="text-align: center;">Cargando historial...</td></tr>
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
 
+    <script src="https://kit.fontawesome.com/e2dc84faef.js" crossorigin="anonymous"></script>
     <script src="js/prestamos.js"></script>
+    <script src="js/saludoUsuario.js"></script>
+    <script src="js/ui-constructor.js"></script>
 </body>
 </html>
