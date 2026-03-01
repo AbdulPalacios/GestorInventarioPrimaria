@@ -20,7 +20,7 @@ namespace GestorInventarioPrimaria.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.Username == request.Username && u.Rol == "Admin");
+                .FirstOrDefaultAsync(u => u.Username == request.Username && u.Rol != "Alumno");
 
             if (usuario == null || usuario.PasswordHash != request.Password)
             {

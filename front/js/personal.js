@@ -9,14 +9,22 @@ async function cargarPersonal() {
         tabla.innerHTML = "";
 
         personal.forEach(p => {
-            // Usamos las clases nuevas: 'usuario-tag' y los iconos de FontAwesome
+            const nombre = p.nombre || "";
+            const apellidos = p.apellidos || "";
+        
+            const nombreCompleto = `${nombre} ${apellidos}`.trim();
+
             tabla.innerHTML += `
                 <tr>
                     <td><strong>#${p.matricula}</strong></td>
-                    <td>${p.nombre || p.username}</td>
+                    <td>${nombreCompleto || p.username}</td>
                     <td><span class="usuario-tag">@${p.username}</span></td>
-                    <td>    
-                        <button onclick="eliminarAdmin(${p.id}, '${p.nombre || p.username}')" class="btn-volver" style="padding: 8px 15px; font-size: 0.85rem;">
+                    <td><span class="rol-tag">${p.rol}</span></td>
+                    <td> 
+                        <button onclick="prepararEditar(${p.id})" class="btn-editar" style="background:#f59e0b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-volver" style="padding: 8px 15px; font-size: 0.85rem;">
                             <i class="fas fa-user-minus"></i> Borrar Acceso
                         </button>
                     </td>
@@ -31,7 +39,11 @@ async function cargarPersonal() {
     }
 }
 
-function abrirModal() {
+function abrirModalNuevo() {
+    document.getElementById('regId').value = ""; 
+    document.getElementById('formRegistroPersonal').reset(); 
+    document.querySelector('.modal-header h3').innerHTML = '<i class="fas fa-user-shield" style="color: #0d6efd;"></i> Nuevo Integrante';
+    document.querySelector('.btn-guardar-azul').innerHTML = '<i class="fas fa-save"></i> Registrar Usuario';
     document.getElementById('modalNuevoPersonal').style.display = 'flex';
 }
 
@@ -68,99 +80,86 @@ async function eliminarAdmin(id, nombre) {
     }
 }
 
-async function guardarNuevoPersonal() {
-    // 1. Recolectamos todos los datos, ¡incluyendo el ID oculto!
-    const id = document.getElementById('regId').value; 
-    const nombre = document.getElementById('regNombre').value.trim();
-    const apellidos = document.getElementById('regApellidos').value.trim();
-    const username = document.getElementById('regUser').value.trim();
-    const pass = document.getElementById('regPass').value.trim();
-    const rol = document.getElementById('regRol').value;
+document.addEventListener('DOMContentLoaded', cargarPersonal);
 
-    // 2. Validación: Si es nuevo, la contraseña es obligatoria. Si es edición, no.
-    if (!nombre || !apellidos || !username || !rol) {
-        alert("Por favor, llena todos los campos obligatorios.");
-        return;
-    }
-    if (!id && !pass) {
-        alert("La contraseña es obligatoria para registrar un usuario nuevo.");
-        return;
-    }
-
-    // 3. Preparamos el paquete de datos
-    const datosUsuario = {
-        nombre: nombre,
-        apellidos: apellidos,
-        username: username,
-        passwordHash: pass, // Si está vacía en edición, tu backend en C# ya sabe que debe ignorarla
-        rol: rol
-    };
-
+async function prepararEditar(id) {
     try {
-        // 4. Decidimos la estrategia: ¿POST (Crear) o PUT (Editar)?
-        let url = 'https://localhost:7082/api/Usuarios/crear-personal';
-        let metodo = 'POST';
+        const response = await fetch(`${API_URL}/Usuarios/${id}`);
+        const u = await response.json();
 
-        if (id) { // Si el input oculto tiene un número, entonces estamos editando
-            url = `https://localhost:7082/api/Usuarios/editar-personal/${id}`;
-            metodo = 'PUT';
-        }
+        // Llenamos el formulario con lo que viene de la base de datos
+        document.getElementById('regId').value = u.id;
+        document.getElementById('regNombre').value = u.nombre;
+        document.getElementById('regApellidos').value = u.apellidos;
+        document.getElementById('regUser').value = u.username;
+        document.getElementById('regRol').value = u.rol;
+        document.getElementById('regPass').value = ""; // Contraseña vacía por seguridad
 
-        // 5. Enviamos la petición al servidor
-        const response = await fetch(url, {
-            method: metodo,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datosUsuario)
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            alert(`✅ ${data.mensaje}`); // Mensaje de éxito
-            
-            cerrarModal(); // Escondemos y limpiamos
-            cargarPersonal(); // Refrescamos la tabla para ver los cambios
-            
-        } else {
-            const errorMsg = await response.text();
-            alert(`❌ Error: ${errorMsg}`);
-        }
+        document.querySelector('.modal-header h3').innerText = "Editar Personal";
+        document.getElementById('modalNuevoPersonal').style.display = 'flex';
     } catch (error) {
-        console.error("Error en la petición:", error);
-        alert("⚠️ Error de conexión con el servidor.");
+        alert("Error al obtener datos del usuario");
     }
 }
 
-document.addEventListener('DOMContentLoaded', cargarPersonal);
+async function guardarPersonal() {
+    // 1. Recopilamos los datos del formulario
+    const id = document.getElementById('regId').value;
+    const nombre = document.getElementById('regNombre').value.trim();
+    const apellidos = document.getElementById('regApellidos').value.trim();
+    const username = document.getElementById('regUser').value.trim();
+    const rol = document.getElementById('regRol').value;
+    const password = document.getElementById('regPass').value.trim();
 
-// Función para abrir el modal y llenarlo con los datos del usuario
-async function abrirModalEditar(id) {
+    // 2. Construimos el objeto JSON
+    const datos = {
+        nombre: nombre,
+        apellidos: apellidos,
+        username: username,
+        rol: rol
+    };
+
+    // Si escribieron una contraseña, la mandamos. Si no, no se actualiza.
+    if (password) {
+        datos.passwordHash = password; // Asignamos al campo que espera tu C#
+    }
+
     try {
-        // 1. Buscamos los datos de esa persona en la base de datos
-        const response = await fetch(`https://localhost:7082/api/Usuarios/${id}`);
+        let response;
         
-        if (!response.ok) throw new Error("No se pudo obtener la información del usuario");
-        
-        const usuario = await response.json();
+        if (id) {
+            // 🟡 MODO EDICIÓN (PUT): Actualiza un registro existente
+            datos.id = parseInt(id);
+            response = await fetch(`${API_URL}/Usuarios/editar-personal/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+        } else {
+            // 🟢 MODO NUEVO (POST): Crea un registro desde cero
+            // Generamos una matrícula automática para el docente
+            datos.matricula = "DOC-" + Math.floor(Math.random() * 10000); 
+            
+            response = await fetch(`${API_URL}/Usuarios/crear-personal`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datos)
+            });
+        }
 
-        // 2. Llenamos el formulario automáticamente
-        document.getElementById('regId').value = usuario.id; // Guardamos el ID en el input oculto
-        document.getElementById('regNombre').value = usuario.nombre;
-        document.getElementById('regApellidos').value = usuario.apellidos;
-        document.getElementById('regUser').value = usuario.username;
-        document.getElementById('regRol').value = usuario.rol;
-        
-        // Dejamos la contraseña en blanco por seguridad
-        document.getElementById('regPass').value = ''; 
-
-        // 3. Cambiamos los textos del modal para que diga "Editar" en vez de "Nuevo"
-        document.querySelector('.modal-header h3').innerHTML = '<i class="fas fa-user-edit" style="color: #ffc107;"></i> Editar Integrante';
-        document.querySelector('.btn-guardar-azul').innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
-
-        // 4. Mostramos el modal
-        document.getElementById('modalNuevoPersonal').style.display = 'flex';
-
+        if (response.ok) {
+            const res = await response.json();
+            alert("✅ " + res.mensaje);
+            
+            // Cerramos el modal y recargamos la tabla
+            document.getElementById('modalNuevoPersonal').style.display = 'none';
+            cargarPersonal(); 
+        } else {
+            const err = await response.json();
+            alert("❌ Error: " + (err.mensaje || "Revisa los datos ingresados."));
+        }
     } catch (error) {
-        console.error("Error:", error);
-        alert("Hubo un problema al cargar los datos para editar.");
+        console.error("Error al guardar:", error);
+        alert("Error de conexión con el servidor.");
     }
 }

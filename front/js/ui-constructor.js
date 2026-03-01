@@ -42,16 +42,24 @@ function construirInterfaz() {
     if (pagina.includes('personal')) document.getElementById('nav-personal').classList.add('active');
 }
 
-// Control de Acceso Basado en Roles
 document.addEventListener('DOMContentLoaded', () => {
-    const rol = localStorage.getItem('usuarioRol');
+    
+    const sesionStr = localStorage.getItem('usuarioSesion');
+    let rol = null;
 
-    // Si NO es Admin, ocultamos funciones de gestión de personal
+    if (sesionStr) {
+        const sesionObj = JSON.parse(sesionStr);
+        rol = sesionObj.rol; 
+    }
+
+    // 2. Si NO es Admin, eliminamos los botones de gestión
     if (rol !== 'Admin') {
-        const btnNuevo = document.querySelector('.btn-verde'); // El que creamos arriba
+        // Eliminar el botón de "Registrar Nuevo Personal"
+        const btnNuevo = document.querySelector('.btn-verde'); 
         if (btnNuevo) btnNuevo.remove();
         
-        // Ocultamos la columna de acciones (borrar) en la tabla
-        document.querySelectorAll('.btn-rojo').forEach(b => b.remove());
+        // Eliminar botones de la tabla (Editar, Borrar y el botón rojo antiguo)
+        // Usamos .remove() en lugar de display='none' para que no quede rastro en el HTML
+        document.querySelectorAll('.btn-editar, .btn-volver, .btn-rojo').forEach(b => b.remove());
     }
 });
