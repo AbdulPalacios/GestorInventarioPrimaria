@@ -41,25 +41,3 @@ function construirInterfaz() {
     if (pagina.includes('prestamos')) document.getElementById('nav-prestamos').classList.add('active');
     if (pagina.includes('personal')) document.getElementById('nav-personal').classList.add('active');
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    
-    const sesionStr = localStorage.getItem('usuarioSesion');
-    let rol = null;
-
-    if (sesionStr) {
-        const sesionObj = JSON.parse(sesionStr);
-        rol = sesionObj.rol; 
-    }
-
-    // 2. Si NO es Admin, eliminamos los botones de gestión
-    if (rol !== 'Admin') {
-        // Eliminar el botón de "Registrar Nuevo Personal"
-        const btnNuevo = document.querySelector('.btn-verde'); 
-        if (btnNuevo) btnNuevo.remove();
-        
-        // Eliminar botones de la tabla (Editar, Borrar y el botón rojo antiguo)
-        // Usamos .remove() en lugar de display='none' para que no quede rastro en el HTML
-        document.querySelectorAll('.btn-editar, .btn-volver, .btn-rojo').forEach(b => b.remove());
-    }
-});

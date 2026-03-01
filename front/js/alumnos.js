@@ -1,14 +1,40 @@
-document.addEventListener('DOMContentLoaded', cargarAlumnos);
+document.addEventListener('DOMContentLoaded', () => {
+    cargarAlumnos();
+
+    //  Evaluamos los permisos para el Formulario de Registro
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion')) || {};
+    const rol = sesion.rol;
+
+    // Si NO es Admin y NO es Secretaria, le escondemos el formulario
+    if (rol !== 'Admin' && rol !== 'Secretaria') {
+        const formRegistro = document.getElementById('formNuevoAlumno');
+        
+        if (formRegistro) {
+            // Buscamos la "tarjeta" completa que envuelve al formulario para ocultarla toda
+            const tarjetaRegistro = formRegistro.closest('.card-accion');
+            
+            if (tarjetaRegistro) {
+                tarjetaRegistro.style.display = 'none';
+            } else {
+                // Por si acaso no encuentra la tarjeta, ocultamos al menos el formulario
+                formRegistro.style.display = 'none'; 
+            }
+        }
+    }
+});
 
 // CARGAR LISTA (Usa el endpoint: /api/Usuarios/alumnos)
 async function cargarAlumnos() {
     const tabla = document.getElementById('tablaAlumnosBody');
+    
+    // 1. Obtenemos el rol para la seguridad visual
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion')) || {};
+    const rol = sesion.rol;
+    const puedeEditar = rol === 'Admin' || rol === 'Secretaria';
+
     try {
         const response = await fetch('https://localhost:7082/api/Usuarios/alumnos');
-        
-        if (!response.ok) {
-            throw new Error("Error al obtener alumnos");
-        }
+        if (!response.ok) throw new Error("Error al obtener alumnos");
 
         const alumnos = await response.json();
         tabla.innerHTML = '';
@@ -19,14 +45,22 @@ async function cargarAlumnos() {
         }
 
         alumnos.forEach(a => {
+            // 2. LA MAGIA: Unimos Nombre y Apellidos (manejando nulos por si acaso)
+            const nombre = a.nombre || "";
+            const apellidos = a.apellidos || "";
+            const nombreCompleto = `${nombre} ${apellidos}`.trim();
+
+            // 3. Control de acceso para el botón
+            const acciones = puedeEditar 
+                ? `<button onclick="eliminarAlumno(${a.id})" class="btn-rojo">🗑️ Eliminar</button>` 
+                : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
+
             tabla.innerHTML += `
                 <tr>
                     <td><strong>${a.matricula}</strong></td>
-                    <td>${a.nombre}</td>
+                    <td>${nombreCompleto}</td>
                     <td>${a.grupo}</td>
-                    <td style="text-align:center;">
-                        <button onclick="eliminarAlumno(${a.id})" class="btn-rojo">🗑️ Eliminar</button>
-                    </td>
+                    <td style="text-align:center;">${acciones}</td>
                 </tr>
             `;
         });
@@ -52,7 +86,7 @@ async function registrarAlumno() {
             body: JSON.stringify({ 
                 nombre: nombre,
                 apellidos: apellidos,
-                grupo: '${grado}${grupoLetra}'
+                grupo: `${grado} ${grupoLetra}`
             })
         });
 

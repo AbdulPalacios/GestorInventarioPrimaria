@@ -1,5 +1,22 @@
 const API_URL = "https://localhost:7082/api";
 
+document.addEventListener('DOMContentLoaded', () => {
+    // Cargamos la tabla de personal
+    cargarPersonal();
+
+    // Evaluamos los permisos
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion')) || {};
+    const rol = sesion.rol;
+
+    // Solo la Directora (Admin) puede agregar personal nuevo
+    if (rol !== 'Admin') {
+        const btnRegistrar = document.querySelector('.btn-registrar');
+        if (btnRegistrar) {
+            btnRegistrar.remove(); // Destruye el botón del HTML
+        }
+    }
+});
+
 async function cargarPersonal() {
     try {
         const response = await fetch(`${API_URL}/Usuarios/personal`);
@@ -8,11 +25,18 @@ async function cargarPersonal() {
         const tabla = document.getElementById('tablaPersonal');
         tabla.innerHTML = "";
 
+        const sesion = JSON.parse(localStorage.getItem('usuarioSesion')) || {};
+        const esAdmin = sesion.rol === 'Admin';
+
         personal.forEach(p => {
             const nombre = p.nombre || "";
             const apellidos = p.apellidos || "";
-        
             const nombreCompleto = `${nombre} ${apellidos}`.trim();
+
+            const acciones = esAdmin 
+                ? `<button onclick="prepararEditar(${p.id})" class="btn-editar" style="background:#f59e0b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;"><i class="fas fa-edit"></i></button>
+                   <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-volver" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-user-minus"></i></button>`
+                : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
 
             tabla.innerHTML += `
                 <tr>
@@ -20,14 +44,7 @@ async function cargarPersonal() {
                     <td>${nombreCompleto || p.username}</td>
                     <td><span class="usuario-tag">@${p.username}</span></td>
                     <td><span class="rol-tag">${p.rol}</span></td>
-                    <td> 
-                        <button onclick="prepararEditar(${p.id})" class="btn-editar" style="background:#f59e0b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-volver" style="padding: 8px 15px; font-size: 0.85rem;">
-                            <i class="fas fa-user-minus"></i> Borrar Acceso
-                        </button>
-                    </td>
+                    <td>${acciones}</td>
                 </tr>
             `;
         });
@@ -79,8 +96,6 @@ async function eliminarAdmin(id, nombre) {
         }
     }
 }
-
-document.addEventListener('DOMContentLoaded', cargarPersonal);
 
 async function prepararEditar(id) {
     try {

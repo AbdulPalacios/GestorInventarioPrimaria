@@ -59,7 +59,7 @@ async function cargarAlumno(matriculaOpcional = null) {
 }
 
 /**
- * 2. REALIZAR PRÉSTAMO (POST)
+ *  REALIZAR PRÉSTAMO (POST)
  */
 async function realizarPrestamo() {
     const materialId = document.getElementById('txtMaterialId').value;
@@ -135,6 +135,12 @@ function renderizarTabla(lista) {
     const tabla = document.getElementById('tablaPendientes');
     tabla.innerHTML = '';
 
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion')) || {};
+    const rol = sesion.rol;
+    
+    // Solo Admin e Inventario pueden gestionar devoluciones
+    const puedeGestionar = rol === 'Admin' || rol === 'Inventario';
+
     if (lista.length === 0) {
         tabla.innerHTML = '<tr><td colspan="3" style="text-align:center; color:green;">¡Limpio! No debe nada 🎉</td></tr>';
         return;
@@ -146,6 +152,11 @@ function renderizarTabla(lista) {
         const esAtrasado = hoy > fechaLimite;
         const horaFormateada = fechaLimite.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+        // Si puede gestionar, pinta el botón rojo. Si no, un texto gris.
+        const btnDevolver = puedeGestionar 
+            ? `<button onclick="devolverMaterial(${item.idReserva})" class="btn-rojo">Devolver</button>`
+            : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
+
         const fila = `
             <tr style="${esAtrasado ? 'background-color: #fef2f2;' : ''}">
                 <td><strong>${item.material}</strong></td>
@@ -153,9 +164,7 @@ function renderizarTabla(lista) {
                     ${item.fechaFin} - <strong>${horaFormateada}</strong> 
                     ${esAtrasado ? '<br>⚠️ ATRASADO' : ''}
                 </td>
-                <td>
-                    <button onclick="devolverMaterial(${item.idReserva})" class="btn-rojo">Devolver</button>
-                </td>
+                <td>${btnDevolver}</td>
             </tr>
         `;
         tabla.innerHTML += fila;
@@ -422,3 +431,18 @@ function cargarSiguientePagina() {
     paginaActualHistorial++;
     traerDatosHistorial(true);
 }
+
+// Cargar historial y ocultar paneles de creación si no tienen permiso
+document.addEventListener('DOMContentLoaded', () => {
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion')) || {};
+    const rol = sesion.rol;
+
+    // 🚀 EL CAMBIO: Si NO es Admin y NO es Inventario, adiós paneles de préstamo
+    if (rol !== 'Admin' && rol !== 'Inventario') {
+        const cards = document.querySelectorAll('.card-accion');
+        if(cards[0]) cards[0].style.display = 'none'; // Oculta buscar alumno
+        if(cards[1]) cards[1].style.display = 'none'; // Oculta realizar préstamo
+    }
+    
+    cargarHistorial();
+});

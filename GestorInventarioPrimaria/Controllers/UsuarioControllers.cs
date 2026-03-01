@@ -215,13 +215,15 @@ namespace GestorInventarioPrimaria.Controllers
         [HttpDelete("eliminar-personal/{id}")]
         public async Task<IActionResult> EliminarPersonal(int id)
         {
-            var admin = await _context.Usuarios.FindAsync(id);
-            if (admin == null) return NotFound("El usuario no existe.");
+            var personalDb = await _context.Usuarios.FindAsync(id);
 
-            // Evitar que un admin se borre a sí mismo
-            if (admin.Rol != "Admin") return BadRequest("Solo se puede eliminar personal administrativo desde aquí.");
+            if (personalDb == null)
+                return NotFound(new { mensaje = "El usuario no existe." });
 
-            _context.Usuarios.Remove(admin);
+            if (personalDb.Rol == "Alumno")
+                return BadRequest(new { mensaje = "Los alumnos se deben eliminar desde el módulo de Alumnos." });
+
+            _context.Usuarios.Remove(personalDb);
             await _context.SaveChangesAsync();
 
             return Ok(new { mensaje = "✅ Personal eliminado correctamente." });
