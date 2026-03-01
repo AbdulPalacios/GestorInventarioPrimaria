@@ -61,32 +61,3 @@ function showError(msg) {
     errorMessage.classList.remove('hidden');
     errorText.textContent = msg;
 }
-
-function abrirModal() { document.getElementById('modalRegistro').style.display = 'flex'; }
-function cerrarModal() { document.getElementById('modalRegistro').style.display = 'none'; }
-
-async function registrarNuevoAdmin() {
-    const datos = {
-        nombre: document.getElementById('regNombre').value,
-        username: document.getElementById('regUser').value,
-        password: document.getElementById('regPass').value,
-        codigoMaestro: document.getElementById('regCodigo').value
-    };
-
-    try {
-        const response = await fetch(`${API_URL}/Auth/registrar`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(datos)
-        });
-
-        const res = await response.json();
-        if (response.ok) {
-            alert("✅ " + res.mensaje);
-            cerrarModal();
-            document.getElementById('registroForm').reset();
-        } else {
-            alert("❌ " + res.mensaje);
-        }
-    } catch (error) { alert("Error de conexión"); }
-}

@@ -41,3 +41,17 @@ function construirInterfaz() {
     if (pagina.includes('prestamos')) document.getElementById('nav-prestamos').classList.add('active');
     if (pagina.includes('personal')) document.getElementById('nav-personal').classList.add('active');
 }
+
+// Control de Acceso Basado en Roles
+document.addEventListener('DOMContentLoaded', () => {
+    const rol = localStorage.getItem('usuarioRol');
+
+    // Si NO es Admin, ocultamos funciones de gestión de personal
+    if (rol !== 'Admin') {
+        const btnNuevo = document.querySelector('.btn-verde'); // El que creamos arriba
+        if (btnNuevo) btnNuevo.remove();
+        
+        // Ocultamos la columna de acciones (borrar) en la tabla
+        document.querySelectorAll('.btn-rojo').forEach(b => b.remove());
+    }
+});

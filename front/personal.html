@@ -24,8 +24,11 @@
             </header>
 
             <div class="card-accion">
-                <div class="card-header">
-                    <h2><i class="fas fa-address-book"></i> Directorio de Usuarios del Sistema</h2>
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; padding: 15px;">
+                    <h2><i class="fas fa-address-book"></i> Directorio de Usuarios</h2>
+                    <button type="button" class="btn-registrar" onclick="abrirModal()">
+                        <i class="fas fa-user-plus"></i> Registrar Personal
+                    </button>
                 </div>
                 
                 <div class="tabla-container">
@@ -46,6 +49,53 @@
                             </tr>
                         </tbody>
                     </table>
+                </div>
+            </div>
+
+            <div id="modalNuevoPersonal" class="modal-overlay" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-user-shield" style="color: #0d6efd;"></i> Nuevo Integrante</h3>
+                        <button type="button" class="btn-cerrar" onclick="cerrarModal()">&times;</button>
+                    </div>
+                    <form id="formRegistroPersonal" onsubmit="event.preventDefault(); guardarNuevoPersonal();">
+                        <input type="hidden" id="regId" value="">
+                        
+                        <div class="form-grid-modal">
+                            <div class="form-group">
+                                <label>Nombre(s):</label>
+                                <input type="text" id="regNombre" placeholder="Ej: Carlos" required pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$">
+                            </div>
+                            <div class="form-group">
+                                <label>Apellidos:</label>
+                                <input type="text" id="regApellidos" placeholder="Ej: Ruiz" required pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$">
+                            </div>
+                            <div class="form-group">
+                                <label>Usuario (Login):</label>
+                                <input type="text" id="regUser" placeholder="Ej: carlos_r" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Contraseña temporal:</label>
+                                <input type="password" id="regPass" placeholder="Mínimo 6 caracteres">
+                            </div>
+                           <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Rol en el Sistema:</label>
+                            <select id="regRol" class="select-iconos" required>
+                                <option value="" disabled selected>Selecciona un rol...</option>
+                                <option value="Docente">&#xf51c; Docente</option> 
+                                <option value="Secretaria">&#xf573; Secretaría</option>
+                                <option value="Inventario">&#xf468; Encargado de Inventario</option>
+                                <option value="Admin">&#xf505; Administrador / Directora</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                            <button type="submit" class="btn-guardar-azul">
+                                <i class="fas fa-save"></i> Registrar Usuario
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>

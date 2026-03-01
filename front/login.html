@@ -37,42 +37,9 @@
                 </button>
 
                 <p class="register-link-text">
-                    ¿Personal nuevo? <a href="#" onclick="abrirModal()">Regístrate aquí</a>
+                    ¿Personal nuevo? Acude a Dirección
                 </p>
             </form>
-
-            <div id="modalRegistro" class="modal-overlay">
-                <div class="modal-content"> <h2 class="modal-title">Nuevo Administrador</h2>
-                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 25px; text-align: center;">Crea una cuenta para gestionar el sistema.</p>
-                    
-                    <form id="registroForm" onsubmit="event.preventDefault(); registrarNuevoAdmin();">
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label>Nombre Completo</label>
-                            <input type="text" id="regNombre" class="input-grande" placeholder="Ej: María Pérez García" required>
-                        </div>
-                        
-                        <div class="form-group" style="margin-bottom: 15px;">
-                            <label>Usuario</label>
-                            <input type="text" id="regUser" class="input-grande" placeholder="Ej: maria_perez" required>
-                        </div>
-                        
-                        <div class="form-group" style="margin-bottom: 5px;">
-                            <label>Contraseña</label>
-                            <input type="password" id="regPass" class="input-grande" placeholder="Mínimo 6 caracteres" required>
-                        </div>
-                        
-                        <div class="auth-code-container">
-                            <label class="auth-label">
-                                <i class="fas fa-user-shield"></i> Autorización
-                            </label>
-                            <input type="password" id="regCodigo" class="input-grande" placeholder="Clave de la Directora" required>
-                        </div>
-                        
-                        <button type="submit" class="btn-verde">Crear Cuenta</button>
-                        <button type="button" class="btn-cancelar" onclick="cerrarModal()">Regresar al inicio</button>
-                    </form>
-                </div>
-            </div>
 
             <div id="errorMessage" class="error-box hidden">
                 <i class="fas fa-exclamation-circle"></i>

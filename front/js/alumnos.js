@@ -38,8 +38,11 @@ async function cargarAlumnos() {
 
 // REGISTRAR (Usa el endpoint: /api/Usuarios/crear)
 async function registrarAlumno() {
-    const nombre = document.getElementById('nombreAlumno').value;
-    const grupo = document.getElementById('grupoAlumno').value;
+    const nombre = document.getElementById('nombreAlumno').value.trim();
+    const apellidos = document.getElementById('apellidoAlumno').value.trim();
+    const grado = document.getElementById('gradoAlumno').value;
+    const grupoLetra = document.getElementById('grupoLetra').value;
+    
     const resultado = document.getElementById('resultadoRegistro');
 
     try {
@@ -47,23 +50,23 @@ async function registrarAlumno() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                nombre: nombre, 
-                grupo: grupo 
-                // No mandamos matrícula ni pass, C# los genera
+                nombre: nombre,
+                apellidos: apellidos,
+                grupo: '${grado}${grupoLetra}'
             })
         });
 
         if (response.ok) {
             const data = await response.json();
-            resultado.innerHTML = `<span style="color:green;">${data.mensaje}. Matrícula: ${data.matricula}</span>`;
+            resultado.innerHTML = `<span style="color:green;">✅ ${data.mensaje}. Matrícula: ${data.matricula}</span>`;
             document.getElementById('formNuevoAlumno').reset();
-            cargarAlumnos(); // Recarga la tabla
+            cargarAlumnos(); 
         } else {
             const errorMsg = await response.text();
-            resultado.innerHTML = `<span style="color:red;">Error: ${errorMsg}</span>`;
+            resultado.innerHTML = `<span style="color:red;">❌ Error: ${errorMsg}</span>`;
         }
     } catch (error) {
-        resultado.innerHTML = `<span style="color:red;">Error de conexión.</span>`;
+        resultado.innerHTML = `<span style="color:red;">⚠️ Error de conexión.</span>`;
     }
 }
 

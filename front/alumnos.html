@@ -31,13 +31,38 @@
                 <form id="formNuevoAlumno" onsubmit="event.preventDefault(); registrarAlumno();">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label><i class="fas fa-signature"></i> Nombre Completo:</label>
-                            <input type="text" id="nombreAlumno" class="input-grande" placeholder="Ej: Juan Pérez López" required>
+                            <label><i class="fas fa-signature"></i> Nombre(s):</label>
+                            <input type="text" id="nombreAlumno" class="input-grande" placeholder="Ej: Juan" 
+                                pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$" title="Solo se permiten letras" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-signature"></i> Apellidos:</label>
+                            <input type="text" id="apellidoAlumno" class="input-grande" placeholder="Ej: Pérez López" 
+                                pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$" title="Solo se permiten letras" required>
                         </div>
                         
                         <div class="form-group">
-                            <label><i class="fas fa-users"></i> Grupo / Grado:</label>
-                            <input type="text" id="grupoAlumno" class="input-grande" placeholder="Ej: 6to B" required>
+                            <label><i class="fas fa-graduation-cap"></i> Grado:</label>
+                            <select id="gradoAlumno" class="input-grande" required>
+                                <option value="">Selecciona Grado</option>
+                                <option value="1°">1° Primero</option>
+                                <option value="2°">2° Segundo</option>
+                                <option value="3°">3° Tercero</option>
+                                <option value="4°">4° Cuarto</option>
+                                <option value="5°">5° Quinto</option>
+                                <option value="6°">6° Sexto</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> Grupo:</label>
+                            <select id="grupoLetra" class="input-grande" required>
+                                <option value="">Selecciona Grupo</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                            </select>
                         </div>
                     </div>
                     

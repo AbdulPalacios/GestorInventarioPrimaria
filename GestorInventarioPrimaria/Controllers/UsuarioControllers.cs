@@ -40,11 +40,15 @@ namespace GestorInventarioPrimaria.Controllers
         [HttpPost("crear")]
         public async Task<IActionResult> CrearAlumno([FromBody] Usuario nuevoAlumno)
         {
-            // Evitar nombres repetidos
-            bool existe = await _context.Usuarios
-                .AnyAsync(u => u.Nombre.ToLower() == nuevoAlumno.Nombre.ToLower());
+            if (string.IsNullOrWhiteSpace(nuevoAlumno.Apellidos))
+                return BadRequest("❌ Los apellidos son obligatorios.");
 
-            if (existe) return BadRequest("❌ Ya existe un alumno con ese nombre.");
+            // Evitar duplicados exactos (Nombre + Apellido)
+            bool existe = await _context.Usuarios
+                .AnyAsync(u => u.Nombre.ToLower() == nuevoAlumno.Nombre.ToLower()
+                          && u.Apellidos.ToLower() == nuevoAlumno.Apellidos.ToLower());
+
+            if (existe) return BadRequest("❌ Ya existe un alumno con ese nombre y apellidos."); ;
 
             // Generar Matrícula Automática (Ej: 2026-001)
             string anioActual = DateTime.Now.Year.ToString();
@@ -107,10 +111,104 @@ namespace GestorInventarioPrimaria.Controllers
         [HttpGet("personal")]
         public async Task<ActionResult<IEnumerable<Usuario>>> GetPersonalAdministrativo()
         {
-            // Filtramos solo los que tengan rol Admin o docente
+            // Traemos a todos los que NO sean Alumnos
             return await _context.Usuarios
-                .Where(u => u.Rol == "Admin")
+                .Where(u => u.Rol != "Alumno")
+                .OrderBy(u => u.Rol)
+                .ThenBy(u => u.Nombre)
                 .ToListAsync();
+        }
+
+        // POST: api/Usuarios/crear-personal
+        [HttpPost("crear-personal")]
+        public async Task<IActionResult> CrearPersonal([FromBody] Usuario nuevoPersonal)
+        {
+            // 1. Validaciones básicas (Código defensivo)
+            if (string.IsNullOrWhiteSpace(nuevoPersonal.Nombre) ||
+                string.IsNullOrWhiteSpace(nuevoPersonal.Apellidos) ||
+                string.IsNullOrWhiteSpace(nuevoPersonal.Username) ||
+                string.IsNullOrWhiteSpace(nuevoPersonal.PasswordHash) ||
+                string.IsNullOrWhiteSpace(nuevoPersonal.Rol))
+            {
+                return BadRequest("❌ Todos los campos son obligatorios.");
+            }
+
+            // 2. Verificar que el Nombre de Usuario (Login) no esté repetido
+            bool usernameExiste = await _context.Usuarios
+                .AnyAsync(u => u.Username.ToLower() == nuevoPersonal.Username.ToLower());
+
+            if (usernameExiste)
+            {
+                return BadRequest("❌ El nombre de usuario ya está en uso. Por favor elige otro.");
+            }
+
+            // 3. Generar Matrícula Automática para Personal (Ej: PER-2026-001)
+            string anioActual = DateTime.Now.Year.ToString();
+
+            // Buscamos al último empleado registrado este año
+            var ultimoPersonal = await _context.Usuarios
+                .Where(u => u.Matricula.StartsWith("PER-" + anioActual))
+                .OrderByDescending(u => u.Id)
+                .FirstOrDefaultAsync();
+
+            int consecutivo = 1;
+            if (ultimoPersonal != null && ultimoPersonal.Matricula.Contains("-"))
+            {
+                // Rompemos el string "PER-2026-001" en pedazos y sacamos el "001"
+                string[] partes = ultimoPersonal.Matricula.Split('-');
+                if (partes.Length > 2 && int.TryParse(partes[2], out int num))
+                {
+                    consecutivo = num + 1;
+                }
+            }
+
+            // Asignamos la matrícula generada
+            nuevoPersonal.Matricula = $"PER-{anioActual}-{consecutivo:D3}";
+
+            // Aseguramos que el grupo vaya vacío porque es personal, no alumno
+            nuevoPersonal.Grupo = string.Empty;
+
+            // 4. Guardar en la Base de Datos
+            _context.Usuarios.Add(nuevoPersonal);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                mensaje = "Usuario registrado con éxito",
+                matricula = nuevoPersonal.Matricula
+            });
+        }
+
+        // GET: api/Usuarios/5 (Sirve para llenar el modal antes de editar)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        {
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null) return NotFound("Usuario no encontrado.");
+            return usuario;
+        }
+
+        // PUT: api/Usuarios/editar-personal/5
+        [HttpPut("editar-personal/{id}")]
+        public async Task<IActionResult> EditarPersonal(int id, [FromBody] Usuario datosActualizados)
+        {
+            var usuarioDb = await _context.Usuarios.FindAsync(id);
+            if (usuarioDb == null) return NotFound("El usuario no existe.");
+
+            // Actualizamos los campos
+            usuarioDb.Nombre = datosActualizados.Nombre;
+            usuarioDb.Apellidos = datosActualizados.Apellidos;
+            usuarioDb.Username = datosActualizados.Username;
+            usuarioDb.Rol = datosActualizados.Rol;
+
+            // Truco profesional: Solo cambiamos la contraseña si el admin escribió una nueva en el input
+            if (!string.IsNullOrWhiteSpace(datosActualizados.PasswordHash))
+            {
+                usuarioDb.PasswordHash = datosActualizados.PasswordHash;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { mensaje = "✅ Datos actualizados correctamente." });
         }
 
         // DELETE: api/Usuarios/eliminar-personal/5
