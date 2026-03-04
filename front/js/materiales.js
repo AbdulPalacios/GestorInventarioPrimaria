@@ -43,8 +43,8 @@ async function cargarInventario() {
 
             // Inyectamos permisos
             const acciones = puedeEditar 
-                ? `<button onclick="prepararEdicion(${m.id}, '${m.titulo.replace(/'/g, "\\'")}', '${m.categoria}', ${m.stockDisponible})" class="btn-azul">✏️</button>
-                   <button onclick="eliminarMaterial(${m.id})" class="btn-rojo">🗑️</button>`
+                ? `<button onclick="prepararEdicion(${m.id}, '${m.titulo.replace(/'/g, "\\'")}', '${m.categoria}', ${m.stockDisponible})" class="btn-azul"><i class="fas fa-edit"></i></button>
+                   <button onclick="eliminarMaterial(${m.id})" class="btn-rojo"><i class="fa-solid fa-trash"></i></button>`
                 : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
         
             tabla.innerHTML += `

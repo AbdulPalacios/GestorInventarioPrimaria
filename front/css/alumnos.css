@@ -153,6 +153,10 @@ tbody tr:hover {
     text-align: center;
 }
 
+.fa-trash{
+    color: #2c3e50;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .form-grid {

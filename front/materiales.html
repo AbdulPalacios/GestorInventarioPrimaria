@@ -14,7 +14,7 @@
         <main class="main-content">
             <header class="top-bar">
                 <div class="header-title">
-                    <h1><i class="fas fa-boxes"></i> Inventario de Materiales</h1>
+                    <h1><i class="fas fa-boxes"></i> Inventario</h1>
                 </div>
                 <div class="user-badge">
                     <i class="fas fa-user-circle icon-usuario"></i>
@@ -66,15 +66,15 @@
             <div class="search-container">
                 <div class="input-wrapper">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="txtBuscarInv" class="input-grande" placeholder="Filtrar por nombre de material...">
+                    <input type="text" id="txtBuscarInv" class="input-grande" placeholder="Buscar Material / Libro...">
                 </div>
             </div>
 
             <div class="filter-chips">
                 <button onclick="filtrarPorCategoria('')" class="chip active">Todos</button>
-                <button onclick="filtrarPorCategoria('Libro')" class="chip">📚 Libros</button>
-                <button onclick="filtrarPorCategoria('Material Deportivo')" class="chip">⚽ Deportes</button>
-                <button onclick="filtrarPorCategoria('Salón')" class="chip">🏫 Salones</button>
+                <button onclick="filtrarPorCategoria('Libro')" class="chip"><i class="fa-solid fa-book"></i> Libros</button>
+                <button onclick="filtrarPorCategoria('Material Deportivo')" class="chip"><i class="fa-regular fa-futbol"></i> Deportes</button>
+                <button onclick="filtrarPorCategoria('Salón')" class="chip"><i class="fa-solid fa-school"></i> Salones</button>
             </div>
 
             <div class="tabla-container">

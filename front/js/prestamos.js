@@ -418,7 +418,7 @@ function actualizarBotonCargarMas(cantidadRecibida) {
             <tr id="filaCargarMas">
                 <td colspan="4" style="text-align: center; padding: 15px;">
                     <button onclick="cargarSiguientePagina()" class="btn-azul" style="font-size: 0.8rem;">
-                        ⬇️ Cargar más registros
+                        <i class="fa-solid fa-arrow-down"></i> Cargar más registros
                     </button>
                 </td>
             </tr>

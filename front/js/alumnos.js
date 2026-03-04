@@ -52,7 +52,7 @@ async function cargarAlumnos() {
 
             // 3. Control de acceso para el botón
             const acciones = puedeEditar 
-                ? `<button onclick="eliminarAlumno(${a.id})" class="btn-rojo">🗑️ Eliminar</button>` 
+                ? `<button onclick="eliminarAlumno(${a.id})" class="btn-rojo"><i class="fa-solid fa-trash"></i> Eliminar</button>` 
                 : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
 
             tabla.innerHTML += `

@@ -239,6 +239,14 @@
     vertical-align: middle;
 }
 
+.btn-azul{
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+}
+
 @media (max-width: 900px) {
     .panel-control {
         grid-template-columns: 1fr; /* En móviles una sola columna */
