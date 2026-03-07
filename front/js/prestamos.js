@@ -13,7 +13,6 @@ async function cargarAlumno(matriculaOpcional = null) {
     const lblMatricula = document.getElementById('lblMatriculaActiva');
     const tabla = document.getElementById('tablaPendientes');
 
-    // Si pasamos matrícula por parámetro la usamos, si no, la leemos del input
     if (matriculaOpcional) {
         matriculaActual = matriculaOpcional;
     } else {
@@ -22,7 +21,6 @@ async function cargarAlumno(matriculaOpcional = null) {
 
     if (!matriculaActual) return;
 
-    // UI: Estado de carga
     infoDiv.style.display = 'block';
     lblMatricula.innerText = "Buscando...";
     tabla.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
@@ -31,7 +29,8 @@ async function cargarAlumno(matriculaOpcional = null) {
         const response = await fetch(`${API_URL}/Prestamos/pendientes/${matriculaActual}`);
 
         if (response.status === 404) {
-            alert("❌ Alumno no encontrado o matrícula incorrecta.");
+            // 🚀 SweetAlert para "No encontrado"
+            Swal.fire({ title: 'No encontrado', text: 'Alumno no encontrado o matrícula incorrecta.', icon: 'warning', confirmButtonColor: '#f39c12' });
             lblMatricula.innerText = "No encontrado";
             bloquearPanel(true);
             return;
@@ -41,32 +40,29 @@ async function cargarAlumno(matriculaOpcional = null) {
 
         const listaPrestamos = await response.json();
 
-        // Éxito: Actualizamos la UI
         lblMatricula.innerText = matriculaActual;
-        infoDiv.style.backgroundColor = "#e0f2fe"; // Azul claro
+        infoDiv.style.backgroundColor = "#e0f2fe"; 
         bloquearPanel(false);
-
         renderizarTabla(listaPrestamos);
 
-        // Foco automático al buscador de materiales para ahorrar tiempo
         const inputMat = document.getElementById('txtBusquedaMaterial');
         if(inputMat) inputMat.focus();
 
     } catch (error) {
         console.error(error);
-        alert("Error de conexión con la API");
+        Swal.fire('Error', 'Error de conexión con la API', 'error');
     }
 }
 
-/**
- *  REALIZAR PRÉSTAMO (POST)
- */
 async function realizarPrestamo() {
     const materialId = document.getElementById('txtMaterialId').value;
     const msgDiv = document.getElementById('msgPrestamo');
     const inputNombreMat = document.getElementById('txtBusquedaMaterial');
 
-    if (!materialId) return alert("Por favor, selecciona un material de la lista");
+    if (!materialId) {
+        // 🚀 SweetAlert para validación
+        return Swal.fire('Atención', 'Por favor, selecciona un material de la lista', 'info');
+    }
 
     msgDiv.innerText = "Procesando...";
     msgDiv.style.color = "blue";
@@ -85,22 +81,27 @@ async function realizarPrestamo() {
         const data = await response.json();
 
         if (response.ok) {
-            // Limpiar campos de material
             document.getElementById('txtMaterialId').value = "";
             if(inputNombreMat) inputNombreMat.value = "";
+            msgDiv.innerText = ""; // Limpiamos el mensaje de texto porque usaremos Swal
             
-            msgDiv.innerText = `✅ Prestado: ${data.material}`;
-            msgDiv.style.color = "green";
+            // 🚀 SweetAlert de éxito automático
+            Swal.fire({
+                title: '¡Préstamo Registrado!',
+                text: `Se prestó: ${data.material}`,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
 
-            // Recargar deudas del alumno automáticamente
             cargarAlumno(matriculaActual); 
         } else {
-            msgDiv.innerText = data.mensaje || "Error al prestar";
-            msgDiv.style.color = "red";
+            Swal.fire('No se pudo prestar', data.mensaje || "Error al registrar el préstamo", 'error');
+            msgDiv.innerText = "";
         }
     } catch (error) {
         console.error(error);
-        msgDiv.innerText = "Error de red";
+        Swal.fire('Error', 'Error de red', 'error');
     }
 
     cargarHistorial();
@@ -110,25 +111,42 @@ async function realizarPrestamo() {
  * 3. DEVOLVER MATERIAL (PUT)
  */
 async function devolverMaterial(idReserva) {
-    if (!confirm("¿Confirmar devolución? El stock aumentará.")) return;
+    // 🚀 Modal de confirmación premium
+    const confirmacion = await Swal.fire({
+        title: '¿Confirmar devolución?',
+        text: "El material será devuelto y el stock volverá a estar disponible.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#27ae60', // Verde alegre
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: '<i class="fas fa-check-circle"></i> Sí, devolver',
+        cancelButtonText: 'Cancelar'
+    });
 
-    try {
-        const response = await fetch(`${API_URL}/Prestamos/devolver/${idReserva}`, {
-            method: 'PUT'
-        });
+    if (confirmacion.isConfirmed) {
+        try {
+            const response = await fetch(`${API_URL}/Prestamos/devolver/${idReserva}`, {
+                method: 'PUT'
+            });
 
-        if (response.ok) {
-            alert("✅ Material devuelto correctamente");
-            cargarAlumno(matriculaActual);
-        } else {
-            alert("No se pudo procesar la devolución");
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Devuelto!',
+                    text: 'Material devuelto correctamente.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                cargarAlumno(matriculaActual);
+            } else {
+                Swal.fire('Error', 'No se pudo procesar la devolución', 'error');
+            }
+        } catch (error) {
+            console.error(error);
+            Swal.fire('Error de conexión', 'No se pudo contactar al servidor', 'error');
         }
-    } catch (error) {
-        console.error(error);
-        alert("Error al conectar");
+        cargarHistorial();
     }
-
-    cargarHistorial();
 }
 
 function renderizarTabla(lista) {
@@ -246,20 +264,30 @@ if (inputBusquedaAlum) {
             if (usuarios.length > 0) {
                 listaSugAlum.innerHTML = '';
                 usuarios.forEach(u => {
+                    // 🚀 LA MAGIA: Concatenamos manejando nulos por si hay registros viejos sin apellido
+                    const nombreStr = u.nombre || "";
+                    const apellidosStr = u.apellidos || "";
+                    const nombreCompleto = `${nombreStr} ${apellidosStr}`.trim();
+
                     const item = document.createElement('div');
+                    item.className = "sugerencia-item"; // Para mantener el estilo limpio
                     item.style.padding = '10px';
                     item.style.cursor = 'pointer';
                     item.style.borderBottom = '1px solid #eee';
-                    item.innerHTML = `<strong>${u.nombre}</strong> <br> <small>Mat: ${u.matricula} - ${u.grupo}</small>`;
+                    
+                    // 1. Mostramos el nombre completo en la lista desplegable
+                    item.innerHTML = `<strong>${nombreCompleto}</strong> <br> <small>Mat: ${u.matricula} - ${u.grupo}</small>`;
                     
                     item.onclick = () => {
-                        inputBusquedaAlum.value = u.nombre;
+                        // 2. Llenamos el input de búsqueda con el nombre completo
+                        inputBusquedaAlum.value = nombreCompleto;
                         matriculaActual = u.matricula;
 
-                        document.getElementById('lblNombreAlumnoActivo').innerText = u.nombre;
+                        // 3. Actualizamos la tarjeta de "Alumno Seleccionado"
+                        document.getElementById('lblNombreAlumnoActivo').innerText = nombreCompleto;
                         document.getElementById('lblMatriculaActiva').innerText = u.matricula;
                         
-                        cargarAlumno(u.matricula); // Carga automática
+                        cargarAlumno(u.matricula); // Carga automática de sus deudas
                         listaSugAlum.style.display = 'none';
                     };
                     listaSugAlum.appendChild(item);
@@ -299,7 +327,12 @@ async function traerDatosHistorial(esCargaExtra = false) {
         if (!esCargaExtra) tabla.innerHTML = ''; // Si no es carga extra, limpiamos la tabla
 
         if (datos.length === 0 && esCargaExtra) {
-            alert("Ya no hay más registros para mostrar.");
+            Swal.fire({
+                title: 'Fin del historial',
+                text: 'Ya no hay más registros para mostrar.',
+                icon: 'info',
+                confirmButtonColor: '#f39c12'
+            });
             return;
         }
 
@@ -327,11 +360,11 @@ async function traerDatosHistorial(esCargaExtra = false) {
 
             if (h.estado === "Activo") {
                 if (esFechaValida && hoy > fechaVencimiento) {
-                    // ROJO: Atrasado 🚩
+                    // ROJO: Atrasado 
                     estiloFila = "background-color: #fef2f2; color: #991b1b; border-left: 5px solid #dc2626;";
                     badgeEstado = `<span style="font-weight:bold;">⚠️ ATRASADO (Vence: ${fVenceStr})</span>`;
                 } else {
-                    // NARANJA: Pendiente 📖
+                    // NARANJA: Pendiente 
                     estiloFila = "background-color: #fff7ed; color: #9a3412; border-left: 5px solid #f97316;";
                     badgeEstado = `<span style="font-weight:bold;">Pendiente (Entrega: ${fVenceStr})</span>`;
                 }
@@ -365,25 +398,42 @@ async function traerDatosHistorial(esCargaExtra = false) {
 }
 
 async function renovarPrestamo(id) {
-    if (!confirm("¿Deseas dar 7 días más de plazo para este material?")) return;
+    // 🚀 Modal de confirmación premium para renovar
+    const confirmacion = await Swal.fire({
+        title: '¿Extender plazo?',
+        text: "Se otorgarán 7 días adicionales para entregar este material.",
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonColor: '#3498db', // Azul claro
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: '<i class="fas fa-clock"></i> Sí, extender plazo',
+        cancelButtonText: 'Cancelar'
+    });
 
-    try {
-        const response = await fetch(`${API_URL}/Prestamos/renovar/${id}`, {
-            method: 'PUT'
-        });
+    if (confirmacion.isConfirmed) {
+        try {
+            const response = await fetch(`${API_URL}/Prestamos/renovar/${id}`, {
+                method: 'PUT'
+            });
 
-        if (response.ok) {
-            const res = await response.json();
-            alert("✅ Plazo extendido con éxito.");
-            cargarHistorial();
-        } else {
-            alert("No se pudo renovar el préstamo.");
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Plazo Extendido!',
+                    text: 'Se han dado 7 días más con éxito.',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                cargarHistorial();
+            } else {
+                Swal.fire('Error', 'No se pudo renovar el préstamo.', 'error');
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire('Error', 'Problema de conexión con el servidor.', 'error');
         }
-    } catch (error) {
-        console.error("Error:", error);
     }
 }
-
 function filtrarDeudores() {
     const mostrarSoloDeudores = document.getElementById('chkSoloDeudores').checked;
     const filas = document.querySelectorAll('#tablaHistorial tr');

@@ -121,25 +121,45 @@ async function registrarAlumno() {
 
 // ELIMINAR (Usa el endpoint: /api/Usuarios/{id})
 async function eliminarAlumno(id) {
-    if (!confirm("¿Estás seguro de eliminar a este alumno? Esta acción no se puede deshacer.")) {
-        return;
-    }
+    const confirmacion = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto! El alumno será dado de baja.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e74c3c', 
+        cancelButtonColor: '#94a3b8',  
+        confirmButtonText: '<i class="fa-solid fa-trash" style="color: white;"></i> Sí, eliminar',
+        cancelButtonText: '<i class="fa-solid fa-xmark" style="color: white;"></i> Cancelar'
+    });
 
-    try {
-        const response = await fetch(`${API_URL}/Usuarios/${id}`, {
-            method: 'DELETE'
-        });
+    if (confirmacion.isConfirmed) {
+        try {
+            const response = await fetch(`${API_URL}/Usuarios/${id}`, {
+                method: 'DELETE'
+            });
 
-        if (response.ok) {
-            alert("✅ Alumno eliminado correctamente.");
-            cargarAlumnos(); // Refresca la tabla automáticamente
-        } else {
-            const errorText = await response.text();
-            alert("❌ Error: " + errorText);
+            if (response.ok) {
+                Swal.fire({
+                    title: '¡Eliminado!',
+                    text: 'El alumno ha sido borrado correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#27ae60' 
+                });
+                cargarAlumnos(); // Refrescamos la tabla
+            } else {
+                const errorText = await response.text();
+                // Alerta de Error (ej. si debe un libro)
+                Swal.fire({
+                    title: 'No se pudo eliminar',
+                    text: errorText,
+                    icon: 'error',
+                    confirmButtonColor: '#3498db'
+                });
+            }
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            Swal.fire('Error de conexión', 'No se pudo contactar con el servidor.', 'error');
         }
-    } catch (error) {
-        console.error("Error al eliminar:", error);
-        alert("Error de conexión con el servidor.");
     }
 }
 

@@ -33,9 +33,13 @@ async function cargarPersonal() {
             const apellidos = p.apellidos || "";
             const nombreCompleto = `${nombre} ${apellidos}`.trim();
 
-            const acciones = esAdmin 
-                ? `<button onclick="prepararEditar(${p.id})" class="btn-editar" style="background:#f59e0b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;"><i class="fas fa-edit"></i></button>
-                   <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-volver" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-user-minus"></i></button>`
+           const acciones = esAdmin 
+                ? `<button onclick="prepararEditar(${p.id})" class="btn-tabla btn-editar">
+                       <i class="fa-solid fa-pen-to-square"></i> Editar
+                   </button>
+                   <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-tabla btn-eliminar">
+                       <i class="fa-solid fa-trash"></i> Eliminar
+                   </button>`
                 : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
 
             tabla.innerHTML += `
@@ -75,24 +79,39 @@ function cerrarModal() {
 }
 
 async function eliminarAdmin(id, nombre) {
-    const confirmacion = confirm(`⚠️ ¿Estás seguro de eliminar a "${nombre}"? \nEsta acción le quitará el acceso al sistema de inmediato.`);
+    // 🚀 Modal de confirmación premium
+    const confirmacion = await Swal.fire({
+        title: '¿Eliminar Usuario?',
+        text: `¿Estás seguro de eliminar a "${nombre}"? Perderá el acceso al sistema inmediatamente.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e74c3c', // Rojo
+        cancelButtonColor: '#94a3b8',  // Gris
+        confirmButtonText: '<i class="fa-solid fa-trash"></i> Sí, eliminar',
+        cancelButtonText: '<i class="fa-solid fa-xmark"></i> Cancelar'
+    });
 
-    if (confirmacion) {
+    if (confirmacion.isConfirmed) {
         try {
             const response = await fetch(`${API_URL}/Usuarios/eliminar-personal/${id}`, {
                 method: 'DELETE'
             });
 
             if (response.ok) {
-                alert("🗑️ Usuario eliminado correctamente.");
+                Swal.fire({
+                    title: '¡Eliminado!',
+                    text: 'Usuario eliminado correctamente del sistema.',
+                    icon: 'success',
+                    confirmButtonColor: '#27ae60'
+                });
                 cargarPersonal(); 
             } else {
                 const error = await response.json();
-                alert("❌ Error: " + (error.mensaje || "No se pudo eliminar"));
+                Swal.fire('Error', error.mensaje || "No se pudo eliminar", 'error');
             }
         } catch (error) {
             console.error("Error al conectar:", error);
-            alert("No se pudo conectar con el servidor.");
+            Swal.fire('Error de conexión', 'No se pudo conectar con el servidor.', 'error');
         }
     }
 }
@@ -113,7 +132,7 @@ async function prepararEditar(id) {
         document.querySelector('.modal-header h3').innerText = "Editar Personal";
         document.getElementById('modalNuevoPersonal').style.display = 'flex';
     } catch (error) {
-        alert("Error al obtener datos del usuario");
+        Swal.fire('Error', 'No se pudieron obtener los datos del usuario.', 'error');
     }
 }
 
@@ -134,16 +153,15 @@ async function guardarPersonal() {
         rol: rol
     };
 
-    // Si escribieron una contraseña, la mandamos. Si no, no se actualiza.
     if (password) {
-        datos.passwordHash = password; // Asignamos al campo que espera tu C#
+        datos.passwordHash = password; 
     }
 
     try {
         let response;
         
         if (id) {
-            // 🟡 MODO EDICIÓN (PUT): Actualiza un registro existente
+            // 🟡 MODO EDICIÓN (PUT)
             datos.id = parseInt(id);
             response = await fetch(`${API_URL}/Usuarios/editar-personal/${id}`, {
                 method: 'PUT',
@@ -151,8 +169,7 @@ async function guardarPersonal() {
                 body: JSON.stringify(datos)
             });
         } else {
-            // 🟢 MODO NUEVO (POST): Crea un registro desde cero
-            // Generamos una matrícula automática para el docente
+            // 🟢 MODO NUEVO (POST)
             datos.matricula = "DOC-" + Math.floor(Math.random() * 10000); 
             
             response = await fetch(`${API_URL}/Usuarios/crear-personal`, {
@@ -164,17 +181,24 @@ async function guardarPersonal() {
 
         if (response.ok) {
             const res = await response.json();
-            alert("✅ " + res.mensaje);
             
-            // Cerramos el modal y recargamos la tabla
+            // 🚀 SweetAlert de éxito automático
+            Swal.fire({
+                title: '¡Éxito!',
+                text: res.mensaje,
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            
             document.getElementById('modalNuevoPersonal').style.display = 'none';
             cargarPersonal(); 
         } else {
             const err = await response.json();
-            alert("❌ Error: " + (err.mensaje || "Revisa los datos ingresados."));
+            Swal.fire('Error al guardar', err.mensaje || "Revisa los datos ingresados.", 'error');
         }
     } catch (error) {
         console.error("Error al guardar:", error);
-        alert("Error de conexión con el servidor.");
+        Swal.fire('Error de conexión', 'No se pudo contactar con el servidor.', 'error');
     }
 }

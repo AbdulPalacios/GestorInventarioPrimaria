@@ -194,7 +194,6 @@ tbody tr:hover { background-color: #fff7ed; } /* Hover cálido para préstamos *
     cursor: pointer;
 }
 
-
 @media (max-width: 900px) {
     .panel-control { grid-template-columns: 1fr; }
 }

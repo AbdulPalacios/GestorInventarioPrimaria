@@ -248,15 +248,13 @@
     color: white;
 }
 
-.fa-trash{
-    color: #db4f4f;
+.btn-rojo,
+.btn-azul{
+    border: 2px solid #2c3e50;
+    color: #2c3e50;
+    border-radius: 4px;
+    padding: 3px;
 }
-
-.fa-edit{
-    color: #f59e0b;
-
-}
-
 /* Responsive */
 @media (max-width: 768px) {
     .button-group {

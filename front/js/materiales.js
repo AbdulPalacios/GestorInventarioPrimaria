@@ -43,8 +43,8 @@ async function cargarInventario() {
 
             // Inyectamos permisos
             const acciones = puedeEditar 
-                ? `<button onclick="prepararEdicion(${m.id}, '${m.titulo.replace(/'/g, "\\'")}', '${m.categoria}', ${m.stockDisponible})" class="btn-azul"><i class="fas fa-edit"></i></button>
-                   <button onclick="eliminarMaterial(${m.id})" class="btn-rojo"><i class="fa-solid fa-trash"></i></button>`
+                ? `<button onclick="prepararEdicion(${m.id}, '${m.titulo.replace(/'/g, "\\'")}', '${m.categoria}', ${m.stockDisponible})" class="btn-azul"><i class="fas fa-edit"></i> Editar</button>
+                   <button onclick="eliminarMaterial(${m.id})" class="btn-rojo"><i class="fa-solid fa-trash"></i> Eliminar</button>`
                 : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
         
             tabla.innerHTML += `
@@ -96,7 +96,14 @@ async function guardarMaterial() {
         });
 
         if (response.ok) {
-            alert(id ? "✅ Material actualizado con éxito" : "✅ Material creado con éxito");
+            Swal.fire({
+                title: '¡Éxito!',
+                text: id ? "Material actualizado con éxito" : "Material creado con éxito",
+                icon: 'success',
+                confirmButtonColor: '#27ae60',
+                timer: 2000, // Se cierra solo en 2 segundos
+                showConfirmButton: false
+            });
             limpiarFormulario();
             cargarInventario(); // Recarga la tabla
         } else {
@@ -111,26 +118,48 @@ async function guardarMaterial() {
 
 // FUNCIÓN PARA ELIMINAR
 async function eliminarMaterial(id) {
-    if (!confirm("¿Estás seguro de eliminar este material del inventario?")) {
-        return;
-    }
+    // 1. Lanzamos la alerta de confirmación
+    const confirmacion = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: "El material será eliminado del inventario de forma permanente.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e74c3c', // Rojo
+        cancelButtonColor: '#94a3b8',  // Gris
+        confirmButtonText: '<i class="fa-solid fa-trash"></i> Sí, eliminar',
+        cancelButtonText: '<i class="fa-solid fa-xmark"></i> Cancelar'
+    });
 
-    try {
-        const response = await fetch(`${API_URL}/Materiales/${id}`, {
-            method: 'DELETE'
-        });
+    // 2. Evaluamos si el usuario confirmó
+    if (confirmacion.isConfirmed) {
+        try {
+            const response = await fetch(`${API_URL}/Materiales/${id}`, {
+                method: 'DELETE'
+            });
 
-        if (response.ok) {
-            alert("✅ Material eliminado.");
-            cargarInventario();
-        } else {
-            // El servidor podría responder que no se puede eliminar si hay préstamos activos
-            const errorMsg = await response.text();
-            alert("❌ No se puede eliminar: " + errorMsg);
+            if (response.ok) {
+                // 3. Alerta de éxito
+                Swal.fire({
+                    title: '¡Eliminado!',
+                    text: 'El material ha sido borrado correctamente.',
+                    icon: 'success',
+                    confirmButtonColor: '#27ae60'
+                });
+                cargarInventario(); // Refrescamos la tabla
+            } else {
+                // El servidor podría responder que no se puede eliminar si hay préstamos activos
+                const errorMsg = await response.text();
+                Swal.fire({
+                    title: 'No se pudo eliminar',
+                    text: errorMsg,
+                    icon: 'error',
+                    confirmButtonColor: '#3498db'
+                });
+            }
+        } catch (error) {
+            console.error("Error al eliminar:", error);
+            Swal.fire('Error de conexión', 'No se pudo contactar con el servidor.', 'error');
         }
-    } catch (error) {
-        console.error("Error al eliminar:", error);
-        alert("Error de red.");
     }
 }
 
