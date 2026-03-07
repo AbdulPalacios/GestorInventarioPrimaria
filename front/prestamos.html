@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Préstamos</title>
+    <title>Centro de Préstamos</title>
 
     <script src="js/auth-guard.js"></script> 
-
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/prestamos.css">
@@ -19,7 +18,7 @@
                     <h1><i class="fas fa-hand-holding"></i> Centro de Préstamos</h1>
                 </div>
                 <div class="user-badge">
-                    <i class="fas fa-user-circle icon-usuario"></i>
+                    <i class="fas fa-user-circle"></i>
                     <span id="nombreUsuarioSaludo">Cargando...</span>
                 </div>
             </header>
@@ -46,8 +45,9 @@
             </div>
 
             <div id="panelOperaciones" class="panel-control panel-disabled">
-                <div class="card-accion">
-                    <div class="card-header header-azul">
+                
+                <div class="card-accion" style="margin-bottom: 0;">
+                    <div class="card-header" style="border-top: none;">
                         <h2><i class="fas fa-upload"></i> Nuevo Préstamo</h2>
                     </div>
                     <form id="formPrestamo" onsubmit="event.preventDefault(); realizarPrestamo();" class="form-padding">
@@ -61,7 +61,7 @@
                             <input type="hidden" id="txtMaterialId">
                         </div>
 
-                        <div id="divDuracionHoras" class="info-alert" style="display: none;">
+                        <div id="divDuracionHoras" class="form-group" style="display: none;">
                             <label><i class="fas fa-clock"></i> Duración del préstamo:</label>
                             <select id="selHoras" class="input-grande">
                                 <option value="1">1 Hora (Clase corta)</option>
@@ -78,12 +78,12 @@
                     </form>
                 </div>
 
-                <div class="card-accion">
-                    <div class="card-header header-naranja">
+                <div class="card-accion" style="margin-bottom: 0;">
+                    <div class="card-header" style="border-top: none;">
                         <h2><i class="fas fa-download"></i> Devoluciones Pendientes</h2>
                     </div>
-                    <div class="tabla-container-mini">
-                        <table class="tabla-compacta">
+                    <div class="tabla-container">
+                        <table id="tablaDeudas">
                             <thead>
                                 <tr>
                                     <th>Material</th>
@@ -92,7 +92,7 @@
                                 </tr>
                             </thead>
                             <tbody id="tablaPendientes">
-                                <tr><td colspan="3" class="text-center gray">Sin préstamos activos</td></tr>
+                                <tr><td colspan="3" style="text-align: center; color: gray;">Sin préstamos activos</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -104,14 +104,13 @@
                     <h2><i class="fas fa-history"></i> Últimos Movimientos</h2>
                 </div>
                 <div class="filter-bar-orange">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="chkSoloDeudores" onchange="filtrarDeudores()"> 
-                        <span class="checkmark"></span>
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; color: #9a3412; font-weight: bold;">
+                        <input type="checkbox" id="chkSoloDeudores" onchange="filtrarDeudores()" style="width: 18px; height: 18px; accent-color: #f97316;"> 
                         Ver solo alumnos que deben material (Pendientes y Atrasados)
                     </label>
                 </div>
                 <div class="tabla-container">
-                    <table class="tabla-compacta">
+                    <table id="tablaGeneralHistorial">
                         <thead>
                             <tr>
                                 <th>Alumno</th>
@@ -121,7 +120,7 @@
                             </tr>
                         </thead>
                         <tbody id="tablaHistorial">
-                            <tr><td colspan="4" class="text-center">Cargando historial...</td></tr>
+                            <tr><td colspan="4" style="text-align: center;">Cargando historial...</td></tr>
                         </tbody>
                     </table>
                 </div>

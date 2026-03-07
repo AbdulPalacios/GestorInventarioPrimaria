@@ -82,6 +82,26 @@ namespace GestorInventarioPrimaria.Controllers
             });
         }
 
+        // PUT: api/Usuarios/editar-alumno/5
+        [HttpPut("editar-alumno/{id}")]
+        public async Task<IActionResult> EditarAlumno(int id, [FromBody] Usuario datosActualizados)
+        {
+            var alumnoDb = await _context.Usuarios.FindAsync(id);
+
+            // Verificamos que exista y que realmente sea un alumno
+            if (alumnoDb == null || alumnoDb.Rol != "Alumno")
+                return NotFound("El alumno no existe.");
+
+            // Actualizamos solo los datos permitidos
+            alumnoDb.Nombre = datosActualizados.Nombre;
+            alumnoDb.Apellidos = datosActualizados.Apellidos;
+            alumnoDb.Grupo = datosActualizados.Grupo;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Datos del alumno actualizados correctamente." });
+        }
+
         // DELETE: api/Usuarios/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsuario(int id)

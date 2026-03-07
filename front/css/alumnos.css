@@ -127,6 +127,7 @@
 table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
 
 thead {
@@ -136,7 +137,14 @@ thead {
 
 th, td {
     padding: 15px;
-    text-align: left;
+    text-align: center;
+}
+
+td {
+    vertical-align: middle;
+    white-space: nowrap;        
+    overflow: hidden;           
+    text-overflow: ellipsis;   
 }
 
 tbody tr:nth-child(even) {
@@ -153,7 +161,8 @@ tbody tr:hover {
     text-align: center;
 }
 
-.fa-trash{
+.fa-trash,
+.fa-pen-to-square{
     color: #2c3e50;
 }
 
@@ -162,4 +171,12 @@ tbody tr:hover {
     .form-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.btn-azul,
+.btn-rojo{
+    border: 2px solid #2c3e50;
+    color: #2c3e50;
+    border-radius: 4px;
+    padding: 3px;
 }

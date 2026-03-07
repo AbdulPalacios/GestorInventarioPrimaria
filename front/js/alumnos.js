@@ -50,9 +50,10 @@ async function cargarAlumnos() {
             const apellidos = a.apellidos || "";
             const nombreCompleto = `${nombre} ${apellidos}`.trim();
 
-            // 3. Control de acceso para el botón
+            // 3. Control de acceso para los botones
             const acciones = puedeEditar 
-                ? `<button onclick="eliminarAlumno(${a.id})" class="btn-rojo"><i class="fa-solid fa-trash"></i> Eliminar</button>` 
+                ? `<button onclick="prepararEdicionAlumno(${a.id}, '${nombre.replace(/'/g, "\\'")}', '${apellidos.replace(/'/g, "\\'")}', '${a.grupo}')" class="btn-azul"><i class="fa-solid fa-pen-to-square"></i> Editar</button>
+                   <button onclick="eliminarAlumno(${a.id})" class="btn-rojo"><i class="fa-solid fa-trash"></i> Eliminar</button>` 
                 : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
 
             tabla.innerHTML += `
@@ -72,6 +73,7 @@ async function cargarAlumnos() {
 
 // REGISTRAR (Usa el endpoint: /api/Usuarios/crear)
 async function registrarAlumno() {
+    const id = document.getElementById('txtIdAlumno').value; // Leemos el ID oculto
     const nombre = document.getElementById('nombreAlumno').value.trim();
     const apellidos = document.getElementById('apellidoAlumno').value.trim();
     const grado = document.getElementById('gradoAlumno').value;
@@ -79,9 +81,16 @@ async function registrarAlumno() {
     
     const resultado = document.getElementById('resultadoRegistro');
 
+    // 🚀 LA MAGIA: Usamos tu variable global API_URL
+    const url = id 
+        ? `${API_URL}/Usuarios/editar-alumno/${id}` 
+        : `${API_URL}/Usuarios/crear`;
+        
+    const metodo = id ? 'PUT' : 'POST';
+
     try {
-        const response = await fetch(`${API_URL}/Usuarios/crear`, {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: metodo,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 nombre: nombre,
@@ -92,8 +101,14 @@ async function registrarAlumno() {
 
         if (response.ok) {
             const data = await response.json();
-            resultado.innerHTML = `<span style="color:green;">✅ ${data.mensaje}. Matrícula: ${data.matricula}</span>`;
+            resultado.innerHTML = `<span style="color:green;">✅ ${data.mensaje}</span>`;
+            
+            // Limpiamos y regresamos el diseño a "Modo Registro"
             document.getElementById('formNuevoAlumno').reset();
+            document.getElementById('txtIdAlumno').value = "";
+            document.querySelector('.card-header h2').innerHTML = `<i class="fas fa-user-plus"></i> Registrar Nuevo Alumno`;
+            document.querySelector('#formNuevoAlumno button[type="submit"]').innerHTML = `<i class="fas fa-id-card"></i> Registrar y Generar Matrícula`;
+            
             cargarAlumnos(); 
         } else {
             const errorMsg = await response.text();
@@ -126,6 +141,28 @@ async function eliminarAlumno(id) {
         console.error("Error al eliminar:", error);
         alert("Error de conexión con el servidor.");
     }
+}
+
+// Actualizar alumno
+function prepararEdicionAlumno(id, nombre, apellidos, grupoCompleto) {
+    document.getElementById('txtIdAlumno').value = id;
+    document.getElementById('nombreAlumno').value = nombre;
+    document.getElementById('apellidoAlumno').value = apellidos;
+    
+    // Truco: Dividimos "6° A" por el espacio para llenar los select
+    if(grupoCompleto) {
+        const partes = grupoCompleto.split(" ");
+        if(partes.length === 2) {
+            document.getElementById('gradoAlumno').value = partes[0];
+            document.getElementById('grupoLetra').value = partes[1];
+        }
+    }
+
+    // Cambiamos los textos para indicar edición
+    document.querySelector('.card-header h2').innerHTML = `<i class="fas fa-user-edit"></i> Editando: ${nombre}`;
+    document.querySelector('#formNuevoAlumno button[type="submit"]').innerHTML = `<i class="fas fa-save"></i> Guardar Cambios`;
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Escuchamos lo que el usuario escribe en tiempo real
