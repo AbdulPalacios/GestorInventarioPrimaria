@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
     // Cargamos la tabla de personal
     cargarPersonal();
@@ -33,13 +31,9 @@ async function cargarPersonal() {
             const apellidos = p.apellidos || "";
             const nombreCompleto = `${nombre} ${apellidos}`.trim();
 
-           const acciones = esAdmin 
-                ? `<button onclick="prepararEditar(${p.id})" class="btn-tabla btn-editar">
-                       <i class="fa-solid fa-pen-to-square"></i> Editar
-                   </button>
-                   <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-tabla btn-eliminar">
-                       <i class="fa-solid fa-trash"></i> Eliminar
-                   </button>`
+            const acciones = esAdmin 
+                ? `<button onclick="prepararEditar(${p.id})" class="btn-editar" style="background:#f59e0b; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;"><i class="fas fa-edit"></i></button>
+                   <button onclick="eliminarAdmin(${p.id}, '${nombreCompleto || p.username}')" class="btn-volver" style="padding: 8px 15px; font-size: 0.85rem;"><i class="fas fa-user-minus"></i></button>`
                 : `<span style="color:gray; font-size:0.85rem;">Solo lectura</span>`;
 
             tabla.innerHTML += `
@@ -79,7 +73,6 @@ function cerrarModal() {
 }
 
 async function eliminarAdmin(id, nombre) {
-    // 🚀 Modal de confirmación premium
     const confirmacion = await Swal.fire({
         title: '¿Eliminar Usuario?',
         text: `¿Estás seguro de eliminar a "${nombre}"? Perderá el acceso al sistema inmediatamente.`,
@@ -132,7 +125,7 @@ async function prepararEditar(id) {
         document.querySelector('.modal-header h3').innerText = "Editar Personal";
         document.getElementById('modalNuevoPersonal').style.display = 'flex';
     } catch (error) {
-        Swal.fire('Error', 'No se pudieron obtener los datos del usuario.', 'error');
+        alert("Error al obtener datos del usuario");
     }
 }
 
@@ -145,6 +138,29 @@ async function guardarPersonal() {
     const rol = document.getElementById('regRol').value;
     const password = document.getElementById('regPass').value.trim();
 
+    // 👇 CANDADOS DE SEGURIDAD PARA LOS NOMBRES 👇
+    const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    
+    if (!regexLetras.test(nombre) || !regexLetras.test(apellidos)) {
+        // Usamos alert normal si no tienen Swal importado en esta vista, o Swal si sí lo tienen.
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('Formato Inválido', 'Los nombres y apellidos solo pueden contener letras, sin números ni símbolos.', 'error');
+        } else {
+            alert("❌ Formato Inválido: Los nombres y apellidos solo pueden contener letras.");
+        }
+        return; // Detiene la ejecución
+    }
+
+    if (apellidos.split(/\s+/).length < 2) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire('Datos Incompletos', 'Por favor ingresa los dos apellidos completos separados por un espacio.', 'error');
+        } else {
+            alert("❌ Datos Incompletos: Por favor ingresa los dos apellidos completos.");
+        }
+        return; // Detiene la ejecución
+    }
+    // 👆 FIN DE LOS CANDADOS 👆
+
     // 2. Construimos el objeto JSON
     const datos = {
         nombre: nombre,
@@ -153,15 +169,16 @@ async function guardarPersonal() {
         rol: rol
     };
 
+    // Si escribieron una contraseña, la mandamos. Si no, no se actualiza.
     if (password) {
-        datos.passwordHash = password; 
+        datos.passwordHash = password; // Asignamos al campo que espera tu C#
     }
 
     try {
         let response;
         
         if (id) {
-            // 🟡 MODO EDICIÓN (PUT)
+            // 🟡 MODO EDICIÓN (PUT): Actualiza un registro existente
             datos.id = parseInt(id);
             response = await fetch(`${API_URL}/Usuarios/editar-personal/${id}`, {
                 method: 'PUT',
@@ -169,7 +186,8 @@ async function guardarPersonal() {
                 body: JSON.stringify(datos)
             });
         } else {
-            // 🟢 MODO NUEVO (POST)
+            // 🟢 MODO NUEVO (POST): Crea un registro desde cero
+            // Generamos una matrícula automática para el docente
             datos.matricula = "DOC-" + Math.floor(Math.random() * 10000); 
             
             response = await fetch(`${API_URL}/Usuarios/crear-personal`, {
@@ -181,24 +199,17 @@ async function guardarPersonal() {
 
         if (response.ok) {
             const res = await response.json();
+            alert("✅ " + res.mensaje);
             
-            // 🚀 SweetAlert de éxito automático
-            Swal.fire({
-                title: '¡Éxito!',
-                text: res.mensaje,
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            });
-            
+            // Cerramos el modal y recargamos la tabla
             document.getElementById('modalNuevoPersonal').style.display = 'none';
             cargarPersonal(); 
         } else {
             const err = await response.json();
-            Swal.fire('Error al guardar', err.mensaje || "Revisa los datos ingresados.", 'error');
+            alert("❌ Error: " + (err.mensaje || "Revisa los datos ingresados."));
         }
     } catch (error) {
         console.error("Error al guardar:", error);
-        Swal.fire('Error de conexión', 'No se pudo contactar con el servidor.', 'error');
+        alert("Error de conexión con el servidor.");
     }
 }

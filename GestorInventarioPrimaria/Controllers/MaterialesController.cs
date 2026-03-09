@@ -17,12 +17,11 @@ namespace GestorInventarioPrimaria.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Material>>> GetMateriales()
-        {
-            return await _context.Materiales
-                                 .OrderBy(m => m.Titulo)
-                                 .ToListAsync();
-        }
+public async Task<ActionResult<IEnumerable<Material>>> GetMateriales()
+{
+    // Obligamos a que siempre salgan ordenados por su ID original
+    return await _context.Materiales.OrderBy(m => m.Id).ToListAsync();
+}
 
         // GET: api/materiales/buscar?termino=mate
         [HttpGet("buscar")]

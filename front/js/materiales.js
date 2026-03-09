@@ -31,14 +31,23 @@ async function cargarInventario() {
         const materiales = await response.json();
         tabla.innerHTML = '';
 
+        let numeroFila = 1; //Creamos la variable del contador
+
         materiales.forEach(m => {
             // ... (deja tu lógica del stock exacto como la tienes) ...
             const stock = m.stockDisponible;
             let estiloStock = ''; let aviso = '';
-            if (m.categoria !== "Salón") {
-                if (stock === 0) { estiloStock = "color:#dc2626; font-weight:bold; background:#fee2e2; padding:2px 5px; border-radius:4px;"; aviso = " ¡AGOTADO!"; } 
-                else if (stock <= 3) { estiloStock = "color:#d97706; font-weight:bold;"; aviso = " (Poco)"; }
-                else if (stock >= 4) { estiloStock = "color:#059669; font-weight:bold;"; aviso = " Suficiente"; }
+            if (stock === 0) { 
+                estiloStock = "color:#dc2626; font-weight:bold; background:#fee2e2; padding:2px 5px; border-radius:4px;"; 
+                aviso = " ¡AGOTADO!"; 
+            } 
+            else if (stock <= 3) { 
+                estiloStock = "color:#d97706; font-weight:bold;"; 
+                aviso = " (Poco)"; 
+            }
+            else if (stock >= 4) { 
+                estiloStock = "color:#059669; font-weight:bold;"; 
+                aviso = " Suficiente"; 
             }
 
             // Inyectamos permisos
@@ -49,13 +58,13 @@ async function cargarInventario() {
         
             tabla.innerHTML += `
                 <tr>
-                    <td>${m.id}</td>
-                    <td><strong>${m.titulo}</strong></td>
+                    <td>${numeroFila}</td> <td><strong>${m.titulo}</strong></td>
                     <td>${m.categoria}</td>
                     <td><span style="${estiloStock}">${stock}${aviso}</span></td>
                     <td>${acciones}</td>
                 </tr>
             `;
+            numeroFila++; //Aumentamos el contador
         });
     } catch (error) { 
         console.error(error); 

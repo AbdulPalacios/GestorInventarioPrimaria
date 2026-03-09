@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using GestorInventarioPrimaria.Data;
 using GestorInventarioPrimaria.Models;
+using System.Text.RegularExpressions;
 
 namespace GestorInventarioPrimaria.Controllers
 {
@@ -42,13 +43,27 @@ namespace GestorInventarioPrimaria.Controllers
         {
             if (string.IsNullOrWhiteSpace(nuevoAlumno.Apellidos))
                 return BadRequest("❌ Los apellidos son obligatorios.");
+            
+            //Aceptar solo letras, espacios, acentos y la Ñ
+            if (!Regex.IsMatch(nuevoAlumno.Nombre, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$") || 
+                !Regex.IsMatch(nuevoAlumno.Apellidos, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"))
+            {
+                return BadRequest("❌ Seguridad: No se permiten números ni símbolos en el nombre o apellidos.");
+            }
+
+            //Validar que existan dos apellidos
+            string[] partesApellidos = nuevoAlumno.Apellidos.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (partesApellidos.Length < 2)
+            {
+                return BadRequest("❌ Debes ingresar los dos apellidos completos.");
+            }
 
             // Evitar duplicados exactos (Nombre + Apellido)
             bool existe = await _context.Usuarios
                 .AnyAsync(u => u.Nombre.ToLower() == nuevoAlumno.Nombre.ToLower()
                           && u.Apellidos.ToLower() == nuevoAlumno.Apellidos.ToLower());
 
-            if (existe) return BadRequest("❌ Ya existe un alumno con ese nombre y apellidos."); ;
+            if (existe) return BadRequest("❌ Ya existe un alumno con ese nombre y apellidos.");
 
             // Generar Matrícula Automática (Ej: 2026-001)
             string anioActual = DateTime.Now.Year.ToString();
@@ -152,6 +167,22 @@ namespace GestorInventarioPrimaria.Controllers
             {
                 return BadRequest("❌ Todos los campos son obligatorios.");
             }
+
+            // 👇 AQUI ESTÁN LOS CANDADOS NUEVOS PARA EL PERSONAL 👇
+            // Aceptar solo letras, espacios, acentos y la Ñ
+            if (!Regex.IsMatch(nuevoPersonal.Nombre, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$") || 
+                !Regex.IsMatch(nuevoPersonal.Apellidos, @"^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"))
+            {
+                return BadRequest("❌ Seguridad: No se permiten números ni símbolos en el nombre o apellidos.");
+            }
+
+            // Validar que existan dos apellidos
+            string[] partesApellidosPer = nuevoPersonal.Apellidos.Trim().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (partesApellidosPer.Length < 2)
+            {
+                return BadRequest("❌ Debes ingresar los dos apellidos completos.");
+            }
+            // 👆 FIN DE LOS CANDADOS 👆
 
             // 2. Verificar que el Nombre de Usuario (Login) no esté repetido
             bool usernameExiste = await _context.Usuarios
