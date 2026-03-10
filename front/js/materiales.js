@@ -66,20 +66,36 @@ async function cargarInventario() {
 // FUNCIÓN PARA GUARDAR (CREAR O EDITAR)
 async function guardarMaterial() {
     const id = document.getElementById('txtIdMaterial').value; // Campo oculto
-    const titulo = document.getElementById('txtTitulo').value;
+    const titulo = document.getElementById('txtTitulo').value.trim();
     const categoria = document.getElementById('selCategoria').value;
     const stock = document.getElementById('txtStock').value;
 
+    if (!titulo || titulo.length < 3) {
+        Swal.fire('Atención', 'El título del material debe tener al menos 3 letras.', 'warning');
+        return;
+    }
+    if (!stock || stock <= 0) {
+        Swal.fire('Atención', 'El stock debe ser mayor a 0.', 'warning');
+        return;
+    }
+    
     if (!titulo || !stock) {
         alert("Por favor, completa todos los campos.");
         return;
+    }
+
+    let stockFinal = parseInt(stock);
+
+    // 🚀 CANDADO PARA SALONES
+    if (categoria === "Salón") {
+        stockFinal = 1; // Un salón físico es único
     }
 
     const material = {
         id: id ? parseInt(id) : 0,
         titulo: titulo,
         categoria: categoria,
-        stockDisponible: parseInt(stock)
+        stockDisponible: stockFinal // Usamos la variable validada
     };
 
     // Si hay ID usamos PUT (editar), si no hay ID usamos POST (crear)
@@ -197,3 +213,29 @@ document.getElementById('txtBuscarInv').addEventListener('input', (e) => {
         r.style.display = r.innerText.toLowerCase().includes(term) ? '' : 'none';
     });
 });
+
+// --- CONTROL INTELIGENTE DE STOCK POR CATEGORÍA ---
+const selectCategoria = document.getElementById('selCategoria');
+const inputStock = document.getElementById('txtStock');
+
+if (selectCategoria && inputStock) {
+    selectCategoria.addEventListener('change', (e) => {
+        if (e.target.value === "Salón") {
+            // Si es Salón: Forzamos a 1, bloqueamos escritura y lo pintamos de gris
+            inputStock.value = 1;
+            inputStock.setAttribute('readonly', true);
+            inputStock.style.backgroundColor = "#f1f5f9"; 
+            inputStock.style.cursor = "not-allowed";
+        } else {
+            // Si es Libro u otro: Liberamos el input
+            inputStock.removeAttribute('readonly');
+            inputStock.style.backgroundColor = "#fff";
+            inputStock.style.cursor = "text";
+            
+            // Solo limpiamos si venía de estar bloqueado en 1
+            if (inputStock.value == "1" && inputStock.hasAttribute('readonly')) {
+                inputStock.value = ""; 
+            }
+        }
+    });
+}

@@ -60,7 +60,6 @@ async function realizarPrestamo() {
     const inputNombreMat = document.getElementById('txtBusquedaMaterial');
 
     if (!materialId) {
-        // 🚀 SweetAlert para validación
         return Swal.fire('Atención', 'Por favor, selecciona un material de la lista', 'info');
     }
 
@@ -78,17 +77,26 @@ async function realizarPrestamo() {
             })
         });
 
-        const data = await response.json();
+        // 🚀 EL ESCUDO ANTI-CRASH: Leemos como texto primero
+        const textResponse = await response.text();
+        let data = {};
+        
+        try {
+            // Intentamos leerlo como JSON
+            data = JSON.parse(textResponse); 
+        } catch (e) {
+            // Si C# mandó texto plano (como el error de stock), lo guardamos aquí
+            data = { mensaje: textResponse }; 
+        }
 
         if (response.ok) {
             document.getElementById('txtMaterialId').value = "";
             if(inputNombreMat) inputNombreMat.value = "";
-            msgDiv.innerText = ""; // Limpiamos el mensaje de texto porque usaremos Swal
+            msgDiv.innerText = ""; 
             
-            // 🚀 SweetAlert de éxito automático
             Swal.fire({
                 title: '¡Préstamo Registrado!',
-                text: `Se prestó: ${data.material}`,
+                text: `Se prestó: ${data.material || 'Material'}`,
                 icon: 'success',
                 timer: 2000,
                 showConfirmButton: false
@@ -96,12 +104,13 @@ async function realizarPrestamo() {
 
             cargarAlumno(matriculaActual); 
         } else {
+            // Ahora sí mostrará el mensaje exacto de tu C# ("❌ No hay disponibilidad...")
             Swal.fire('No se pudo prestar', data.mensaje || "Error al registrar el préstamo", 'error');
             msgDiv.innerText = "";
         }
     } catch (error) {
         console.error(error);
-        Swal.fire('Error', 'Error de red', 'error');
+        Swal.fire('Error', 'Error de red o conexión', 'error');
     }
 
     cargarHistorial();
@@ -245,7 +254,7 @@ if (inputBusquedaMat) {
     });
 }
 
-// --- BUSCADOR DE ALUMNOS ---
+// --- BUSCADOR DE USUARIOS (ALUMNOS Y DOCENTES) ---
 const inputBusquedaAlum = document.getElementById('txtBusquedaAlumno');
 const listaSugAlum = document.getElementById('listaSugerenciasAlumno');
 
@@ -264,27 +273,30 @@ if (inputBusquedaAlum) {
             if (usuarios.length > 0) {
                 listaSugAlum.innerHTML = '';
                 usuarios.forEach(u => {
-                    // 🚀 LA MAGIA: Concatenamos manejando nulos por si hay registros viejos sin apellido
                     const nombreStr = u.nombre || "";
                     const apellidosStr = u.apellidos || "";
                     const nombreCompleto = `${nombreStr} ${apellidosStr}`.trim();
 
+                    // VALIDACIÓN DE ROL: Distinguimos visualmente a Docentes de Alumnos
+                    const etiquetaRol = u.rol === 'Docente' || u.rol === 'Admin' 
+                        ? `<span style="color:#e74c3c; font-weight:bold;">[${u.rol}]</span>` 
+                        : `<span style="color:#3498db; font-weight:bold;">[Alumno - Grupo: ${u.grupo || 'N/A'}]</span>`;
+
                     const item = document.createElement('div');
-                    item.className = "sugerencia-item"; // Para mantener el estilo limpio
+                    item.className = "sugerencia-item";
                     item.style.padding = '10px';
                     item.style.cursor = 'pointer';
                     item.style.borderBottom = '1px solid #eee';
                     
-                    // 1. Mostramos el nombre completo en la lista desplegable
-                    item.innerHTML = `<strong>${nombreCompleto}</strong> <br> <small>Mat: ${u.matricula} - ${u.grupo}</small>`;
+                    // Mostramos el nombre, la matrícula y su rol/grupo
+                    item.innerHTML = `<strong>${nombreCompleto}</strong> <br> <small>Mat: ${u.matricula} ${etiquetaRol}</small>`;
                     
                     item.onclick = () => {
-                        // 2. Llenamos el input de búsqueda con el nombre completo
                         inputBusquedaAlum.value = nombreCompleto;
                         matriculaActual = u.matricula;
 
-                        // 3. Actualizamos la tarjeta de "Alumno Seleccionado"
-                        document.getElementById('lblNombreAlumnoActivo').innerText = nombreCompleto;
+                        // Actualizamos la tarjeta azul de la UI con el nombre y el ROL
+                        document.getElementById('lblNombreAlumnoActivo').innerHTML = `${nombreCompleto} <strong style="color:#2c3e50;">(${u.rol})</strong>`;
                         document.getElementById('lblMatriculaActiva').innerText = u.matricula;
                         
                         cargarAlumno(u.matricula); // Carga automática de sus deudas
@@ -296,7 +308,7 @@ if (inputBusquedaAlum) {
             } else {
                 listaSugAlum.style.display = 'none';
             }
-        } catch (error) { console.error("Error buscando alumno:", error); }
+        } catch (error) { console.error("Error buscando usuario:", error); }
     });
 }
 

@@ -74,8 +74,8 @@ async function cargarAlumnos() {
 // REGISTRAR (Usa el endpoint: /api/Usuarios/crear)
 async function registrarAlumno() {
     const id = document.getElementById('txtIdAlumno').value; // Leemos el ID oculto
-    const nombre = document.getElementById('nombreAlumno').value.trim();
-    const apellidos = document.getElementById('apellidoAlumno').value.trim();
+    const nombre = document.getElementById('nombreAlumno').value.trim().toUpperCase();
+    const apellidos = document.getElementById('apellidoAlumno').value.trim().toUpperCase();
     const grado = document.getElementById('gradoAlumno').value;
     const grupoLetra = document.getElementById('grupoLetra').value;
     

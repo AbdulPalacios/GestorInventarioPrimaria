@@ -20,16 +20,16 @@ namespace GestorInventarioPrimaria.Controllers
         [HttpPost("registrar")]
         public async Task<IActionResult> RegistrarPrestamo([FromBody] PrestamoDto datos)
         {
-            // VALIDAR ALUMNO
-            var alumno = await _context.Usuarios
+            //  VALIDAR USUARIO
+            var usuario = await _context.Usuarios
                                 .FirstOrDefaultAsync(u => u.Matricula == datos.MatriculaAlumno);
 
-            if (alumno == null)
+            if (usuario == null)
             {
-                return BadRequest("❌ No existe ningún alumno con esa matrícula.");
+                return BadRequest("❌ No existe ningún usuario con esa matrícula.");
             }
 
-            // VALIDAR MATERIAL (Libro o Salón)
+            //  VALIDAR MATERIAL (Libro, Balón o Salón)
             var material = await _context.Materiales.FindAsync(datos.MaterialId);
 
             if (material == null)
@@ -37,25 +37,34 @@ namespace GestorInventarioPrimaria.Controllers
                 return NotFound("❌ El material no existe.");
             }
 
-            //VALIDAR SI YA TIENE ESE MATERIAL PRESTADO
+            if (material.Categoria == "Salón")
+            {
+                // Si es salón y el usuario NO es Docente ni Admin, lo rebotamos
+                if (usuario.Rol != "Docente" && usuario.Rol != "Admin")
+                {
+                    return BadRequest($"❌ Acceso denegado: Los salones solo pueden ser reservados por Docentes. El rol de {usuario.Nombre} es {usuario.Rol}.");
+                }
+            }
+
+            //  VALIDAR SI YA TIENE ESE MATERIAL PRESTADO
             var prestamosActivos = await _context.Reservas
-                .CountAsync(r => r.UsuarioId == alumno.Id && r.Estatus == "Activo");
+                .CountAsync(r => r.UsuarioId == usuario.Id && r.Estatus == "Activo");
 
             if (prestamosActivos >= 2)
             {
-                return BadRequest($"❌ {alumno.Nombre} ya tiene {prestamosActivos} préstamos activos. Debe devolver alguno primero.");
+                return BadRequest($"❌ {usuario.Nombre} ya tiene {prestamosActivos} préstamos activos. Debe devolver alguno primero.");
             }
 
-            // Validamos Stock solo si es un objeto físico o instalación única
+            // Validamos Stock
             if (material.StockDisponible <= 0)
             {
                 return BadRequest($"❌ No hay disponibilidad de '{material.Titulo}'.");
             }
 
-            // 3. CREAR LA RESERVA
+            // CREAR LA RESERVA
             var nuevaReserva = new Reserva
             {
-                UsuarioId = alumno.Id,
+                UsuarioId = usuario.Id,
                 MaterialId = material.Id,
                 FechaInicio = DateTime.Now,
 
@@ -77,7 +86,7 @@ namespace GestorInventarioPrimaria.Controllers
             return Ok(new
             {
                 mensaje = "✅ Préstamo exitoso",
-                alumno = alumno.Nombre,
+                alumno = usuario.Nombre,
                 material = material.Titulo,
                 fechaTermino = nuevaReserva.FechaFinEsperada.ToString("g")
             });
