@@ -78,6 +78,12 @@ async function registrarAlumno() {
     const apellidos = document.getElementById('apellidoAlumno').value.trim().toUpperCase();
     const grado = document.getElementById('gradoAlumno').value;
     const grupoLetra = document.getElementById('grupoLetra').value;
+
+    const cantidadApellidos = apellidos.split(/\s+/).length;
+    if (cantidadApellidos < 2) {
+        Swal.fire('Atención', 'Debes ingresar ambos apellidos (paterno y materno).', 'warning');
+        return; 
+    }
     
     const resultado = document.getElementById('resultadoRegistro');
 

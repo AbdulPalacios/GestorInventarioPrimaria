@@ -145,6 +145,12 @@ async function guardarPersonal() {
     const rol = document.getElementById('regRol').value;
     const password = document.getElementById('regPass').value.trim();
 
+    const cantidadApellidos = apellidos.split(/\s+/).length;
+    if (cantidadApellidos < 2) {
+        Swal.fire('Atención', 'El personal debe registrarse con sus dos apellidos.', 'warning');
+        return; 
+    }
+
     // 2. Construimos el objeto JSON
     const datos = {
         nombre: nombre,
